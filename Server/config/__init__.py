@@ -1,0 +1,1 @@
+from .config import Config, generate_config
