@@ -1,6 +1,6 @@
-fastapi
 google-generativeai
 python-dotenv
 supabase
 PyJWT
 pydantic-settings
+flask
