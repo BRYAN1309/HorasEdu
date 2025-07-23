@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from dotenv import load_dotenv
 from config import generate_config  # Updated import
+from flask_cors import CORS
 
 # Import controllers
 from controller import (
@@ -19,6 +20,11 @@ load_dotenv()
 config = generate_config()
 
 app = Flask(__name__)
+CORS(
+    app,
+    resources={r"/*": {"origins": "http://localhost:5173"}},
+    supports_credentials=True
+)
 
 # JWT Configuration
 app.config["JWT_SECRET_KEY"] = config.jwt_secret_key
@@ -41,6 +47,7 @@ app.route("/modules/course/<int:course_id>", methods=["GET"])(module_controller.
 app.route("/materials", methods=["POST"])(material_controller.create_material)
 app.route("/materials", methods=["GET"])(material_controller.get_materials)
 app.route("/modules/<int:module_id>/materials", methods=["GET"])(material_controller.get_materials_by_module)
+
 # Quiz routes
 app.route("/quiz", methods=["POST"])(quiz_controller.create_quiz)
 app.route("/modules/<int:module_id>/quiz", methods=["GET"])(quiz_controller.get_quizzes_by_module)
