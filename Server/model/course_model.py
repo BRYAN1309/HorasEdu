@@ -7,12 +7,7 @@ class CourseModel:
 
     @staticmethod
     def get_all_courses():
-<<<<<<< HEAD
         return supabase.table("courses").select("*").order("created_at", desc=True).execute()
-=======
-        # return supabase.table("courses").select("*").order("inserted_at", desc=True).execute()
-        return supabase.table("courses").select("*").execute()
->>>>>>> b0953b6b30b4ba2f2b6da2dc93ec6350bb257860
     
     @staticmethod
     def get_course_by_id(course_id):
