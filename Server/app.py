@@ -11,7 +11,8 @@ from controller import (
     module_controller,
     material_controller,
     quiz_controller,
-    question_controller
+    question_controller,
+    user_course_controller
 )
 
 # Load configuration
@@ -52,6 +53,9 @@ app.route("/questions/<int:quiz_id><int:questions_id>", methods=["GET"])(questio
 app.route("/questions", methods=["POST"])(question_controller.create_question)
 app.route("/questions/quiz/<int:quiz_id>", methods=["GET"])(question_controller.get_all_questions_by_quiz)
 app.route("/questions/<int:question_id>", methods=["GET"])(question_controller.get_question_by_id)
+
+app.route("/user/courses/enroll", methods=["POST"])(user_course_controller.enroll_course)
+app.route("/user/courses", methods=["GET"])(user_course_controller.get_user_courses)
 
 if __name__ == "__main__":
     app.run(debug=True)
