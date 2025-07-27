@@ -9,5 +9,14 @@ class CourseModel:
     def get_all_courses():
         return supabase.table("courses").select("*").order("created_at", desc=True).execute()
     
+    @staticmethod
     def get_course_by_id(course_id):
         return supabase.table("courses").select("*").eq("id", course_id).single().execute()
+
+    @staticmethod
+    def get_course_modules_materials(course_id):
+        return supabase.table("courses") \
+            .select("*, modules(*, materials(*))") \
+            .eq("id", course_id) \
+            .single() \
+            .execute()
