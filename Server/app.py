@@ -12,10 +12,10 @@ from controller import (
     module_controller,
     material_controller,
     quiz_controller,
-    question_controller
+    question_controller,
+    user_course_controller
 )
-
-# Load configuration
+from controller import user_quiz_controller
 load_dotenv()
 config = generate_config()
 
@@ -38,6 +38,7 @@ app.route("/user/login", methods=["POST"])(user_controller.login)
 app.route("/courses", methods=["POST"])(course_controller.create_course)
 app.route("/courses", methods=["GET"])(course_controller.get_courses)
 app.route("/courses/<int:course_id>", methods=["GET"])(course_controller.get_course_by_id)  # ✅ NEW ROUTE
+app.route("/courses/<int:course_id>/all", methods=["GET"])(course_controller.get_course_modules_materials)
 
 # Module routes
 app.route("/modules", methods=["POST"])(module_controller.create_module)
@@ -59,6 +60,13 @@ app.route("/questions/<int:quiz_id><int:questions_id>", methods=["GET"])(questio
 app.route("/questions", methods=["POST"])(question_controller.create_question)
 app.route("/questions/quiz/<int:quiz_id>", methods=["GET"])(question_controller.get_all_questions_by_quiz)
 app.route("/questions/<int:question_id>", methods=["GET"])(question_controller.get_question_by_id)
+
+app.route("/user/courses/enroll", methods=["POST"])(user_course_controller.enroll_course)
+app.route("/user/courses", methods=["GET"])(user_course_controller.get_user_courses)
+
+app.route("/quiz/answer", methods=["POST"])(user_quiz_controller.submit_answer)
+app.route("/quiz/submit/<int:quiz_id>", methods=["POST"])(user_quiz_controller.submit_quiz)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
