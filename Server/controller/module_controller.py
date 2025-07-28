@@ -16,3 +16,9 @@ def get_modules_by_course(course_id):
         return success_response("Modules retrieved", res.data)
     except Exception as e:
         return error_response(str(e))
+def get_modules_materials(module_id):
+    try:
+        res = ModuleModel.get_modules_materials(module_id)
+        return success_response("Modules materials retrieved", res.data)
+    except Exception as e:
+        return error_response(str(e))

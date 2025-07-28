@@ -16,6 +16,8 @@ from controller import (
     user_course_controller
 )
 from controller import user_quiz_controller
+from controller import quiz_visited_controller
+from controller import material_visited_controller
 load_dotenv()
 config = generate_config()
 
@@ -43,6 +45,7 @@ app.route("/courses/<int:course_id>/all", methods=["GET"])(course_controller.get
 # Module routes
 app.route("/modules", methods=["POST"])(module_controller.create_module)
 app.route("/modules/course/<int:course_id>", methods=["GET"])(module_controller.get_modules_by_course)
+app.route("/modules/<int:module_id>/materials",methods=["GET"])(module_controller.get_modules_materials)
 
 # Endpoint Material
 app.route("/materials", methods=["POST"])(material_controller.create_material)
@@ -67,6 +70,7 @@ app.route("/user/courses", methods=["GET"])(user_course_controller.get_user_cour
 app.route("/quiz/answer", methods=["POST"])(user_quiz_controller.submit_answer)
 app.route("/quiz/submit/<int:quiz_id>", methods=["POST"])(user_quiz_controller.submit_quiz)
 
-
+app.route("/quiz/visited", methods=["POST"])(quiz_visited_controller.create_quiz_visited)
+app.route("/material/visited", methods=["POST"])(material_visited_controller.create_material_visited)
 if __name__ == "__main__":
     app.run(debug=True)
