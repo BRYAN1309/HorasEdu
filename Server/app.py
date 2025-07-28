@@ -17,6 +17,7 @@ from controller import (
 )
 from controller import user_quiz_controller
 from controller import quiz_visited_controller
+from controller import material_visited_controller
 load_dotenv()
 config = generate_config()
 
@@ -70,6 +71,6 @@ app.route("/quiz/answer", methods=["POST"])(user_quiz_controller.submit_answer)
 app.route("/quiz/submit/<int:quiz_id>", methods=["POST"])(user_quiz_controller.submit_quiz)
 
 app.route("/quiz/visited", methods=["POST"])(quiz_visited_controller.create_quiz_visited)
-
+app.route("/material/visited", methods=["POST"])(material_visited_controller.create_material_visited)
 if __name__ == "__main__":
     app.run(debug=True)
