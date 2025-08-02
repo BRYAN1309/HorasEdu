@@ -41,11 +41,13 @@ app.route("/courses", methods=["POST"])(course_controller.create_course)
 app.route("/courses", methods=["GET"])(course_controller.get_courses)
 app.route("/courses/<int:course_id>", methods=["GET"])(course_controller.get_course_by_id)  # ✅ NEW ROUTE
 app.route("/courses/<int:course_id>/all", methods=["GET"])(course_controller.get_course_modules_materials)
+app.route("/courses/all", methods=["GET"])(course_controller.get_all_course_modules_materials)
 
 # Module routes
 app.route("/modules", methods=["POST"])(module_controller.create_module)
 app.route("/modules/course/<int:course_id>", methods=["GET"])(module_controller.get_modules_by_course)
 app.route("/modules/<int:module_id>/materials",methods=["GET"])(module_controller.get_modules_materials)
+app.route("/modules/<int:module_id>",methods=["GET"])(module_controller.get_module)
 
 # Endpoint Material
 app.route("/materials", methods=["POST"])(material_controller.create_material)
@@ -71,6 +73,8 @@ app.route("/quiz/answer", methods=["POST"])(user_quiz_controller.submit_answer)
 app.route("/quiz/submit/<int:quiz_id>", methods=["POST"])(user_quiz_controller.submit_quiz)
 
 app.route("/quiz/visited", methods=["POST"])(quiz_visited_controller.create_quiz_visited)
+app.route("/quiz/view/visited", methods=["GET"])(quiz_visited_controller.get_quiz_visited)
 app.route("/material/visited", methods=["POST"])(material_visited_controller.create_material_visited)
+app.route("/material/view/visited", methods=["GET"])(material_visited_controller.get_materials_visited)
 if __name__ == "__main__":
     app.run(debug=True)

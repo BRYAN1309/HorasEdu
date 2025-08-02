@@ -7,11 +7,11 @@ import Dashboard from '../pages/Dashboard';
 import Register from '../pages/Register';
 import Courses from '../pages/Courses';
 import CourseDetailsPage from '../pages/CourseDetail';
-import Module from '../pages/Module';
 import Material from '../pages/Material';
 import Quiz from '../pages/Quiz';
 import LandingPage from '../pages/LandingPage';
 import ProfilePage from '../pages/Profile';
+import ModulePage from '../pages/Module';
 
 const router = createBrowserRouter([
 	{
@@ -45,7 +45,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: '/courses/:id_course/module/:id_module',
-								element: <Module />,
+								element: <ModulePage />,
 							},
 							{
 								path: '/courses/:id_course/module/:id_module/material/:id_material',

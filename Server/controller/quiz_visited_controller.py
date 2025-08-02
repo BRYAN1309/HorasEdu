@@ -33,3 +33,12 @@ def create_quiz_visited():
         return success_response("Quiz visited recorded", res.data)
     except Exception as e:
         return error_response(str(e))
+    
+def get_quiz_visited():
+    try:
+        modules_id = request.args.getlist('modules_id', type=int)
+        res = QuizVisitedModel.get_all_quiz_visited(modules_id)
+        return success_response("Quiz Visited", res.data)
+    except Exception as e:
+        return error_response(str(e))
+

@@ -33,3 +33,12 @@ def create_material_visited():
         return success_response("material visited recorded", res.data)
     except Exception as e:
         return error_response(str(e))
+    
+def get_materials_visited():
+    try:
+        material_ids = request.args.getlist('material_ids', type=int)
+        res = MaterialVisitedModel.get_all_materials_visited(material_ids=material_ids)
+        return success_response("Material Visited", res.data)
+    except Exception as e:
+        return error_response(str(e))
+

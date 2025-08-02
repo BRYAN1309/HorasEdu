@@ -23,7 +23,6 @@ def get_materials():
     except Exception as e:
         return error_response(str(e))
 
-
 def get_materials_by_module(module_id):
     try:
         res = MaterialModel.get_materials_by_module(module_id)

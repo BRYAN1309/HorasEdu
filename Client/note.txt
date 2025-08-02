@@ -1,0 +1,9 @@
+1. Show Preview Modal Course (v)
+2. Add Course (v)
+3. Course Page (v)
+    === Debug ===
+        - user's progress 
+        - quiz visited
+4. Module Page 
+5. Material Page
+5. Quiz Page

@@ -19,10 +19,15 @@ export interface RegisterPayload {
 export interface Material {
 	id: number;
 	title: string;
+	module_id: number;
 	content: string;
 	media_url?: string;
+	image_url?: string;
+	description: string;
+	duration: number;
 	created_at: string;
 	type: 'article' | 'video' | 'image' | 'youtube';
+	completed: boolean;
 }
 
 export interface Quiz {
@@ -31,18 +36,40 @@ export interface Quiz {
 	module_id: number;
 	created_at: string;
 	score?: number;
-	completed: boolean;
+	lock: boolean;
+	duration: number;
+	pass_score: number;
+	type: 'final' | 'normal';
+	description: string;
+	questions: Question[];
+}
+
+export interface Question {
+	id: number;
+	quiz_id: number;
+	questions_text: string;
+	option_a: string;
+	option_b: string;
+	option_c: string;
+	option_d: string;
+	correct_answer: string;
+	correct_answer_value: string;
+	explanation: string;
+	created_at: string;
+	url_image: string;
 }
 
 export interface Module {
 	id: number;
 	title: string;
 	description: string;
+	duration: number;
+	total_materials: number;
+	image_url: string;
 	course_id: number;
 	materials: Material[];
-	quiz: Quiz;
 	completed: boolean;
-	progress: number;
+	quiz: Quiz[];
 }
 
 export interface Course {
@@ -50,13 +77,11 @@ export interface Course {
 	title: string;
 	description: string;
 	author: string;
-	created_at: Date;
+	created_at: string;
 	updated_at: Date;
 	durasi: number;
 	kesulitan: 'pemula' | 'menengah' | 'lanjutan';
 	url_image: string;
-	status: 'aktif' | 'selesai';
-	// modules: [];
 }
 
 export interface ISidebarItems {
@@ -72,22 +97,35 @@ export interface IDashboardContext {
 	setSidebarItems: React.Dispatch<React.SetStateAction<ISidebarItems[]>>;
 }
 
-interface TestCourse {
+export interface CourseDetails {
 	id: number;
-	created_at: string;
-	updated_at: string;
 	title: string;
 	description: string;
 	durasi: number;
 	author: string;
 	kesulitan: 'pemula' | 'menengah' | 'lanjutan';
-	url_image?: string;
+	url_image: string;
 	modules: Module[];
+	created_at: string;
 }
 
 export interface CoursePreviewProps {
-	course: TestCourse;
+	course?: CourseDetails;
 	isOpen: boolean;
 	onClose: () => void;
-	onAddCourse: (courseId: number) => string;
+	onAddCourse: (courseId: number) => Promise<void>;
+}
+
+export interface IMaterialsVisited {
+	id: number;
+	user_id: number;
+	materials_id: number;
+	created_at: string;
+}
+
+export interface IQuizVisited {
+	id: number;
+	user_id: number;
+	module_id: number;
+	created_at: string;
 }

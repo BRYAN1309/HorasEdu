@@ -38,10 +38,17 @@ def get_course_by_id(course_id):
     
 def get_course_modules_materials(course_id):
     try:
-        res = CourseModel.get_course_modules_materials(course_id)
+        res = CourseModel.get_course_modules_materials_quizzes(course_id)
         if res.data:
             return success_response("Course modules and materials found", res.data)
         else:
             return error_response(f"Course with ID {course_id} not found")
+    except Exception as e:
+        return error_response(str(e))
+
+def get_all_course_modules_materials():
+    try:
+        res = CourseModel.get_all_course_modules_materials()
+        return success_response("Course modules and materials found", res.data)
     except Exception as e:
         return error_response(str(e))

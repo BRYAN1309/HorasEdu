@@ -18,7 +18,7 @@ const Sidebar = () => {
 
 	return (
 		<div
-			className={`fixed inset-y-0 left-0 z-50 w-64 bg-white transform transition-transform duration-300 ease-in-out border-r border-gray-200 ${
+			className={`fixed inset-y-0 left-0 z-40 w-64 bg-white transform transition-transform duration-300 ease-in-out border-r border-gray-200 ${
 				sidebarOpen ? 'translate-x-0' : '-translate-x-full'
 			} lg:translate-x-0 lg:static lg:inset-0`}
 		>

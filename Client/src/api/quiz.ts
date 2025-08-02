@@ -9,7 +9,7 @@ const viewQuizDetails = async (id: number) => {
 	}
 };
 
-const viewQuizes = async () => {
+const viewQuizzes = async () => {
 	try {
 		const res = await api.get('/quizes');
 		return res.data;

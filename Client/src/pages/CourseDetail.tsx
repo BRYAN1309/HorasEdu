@@ -1,158 +1,220 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BookOpen, Play, Clock, Award, CheckCircle, Lock, FileText, Video, Image, ArrowLeft, Star, Calendar, Target} from 'lucide-react';
-import type {Module, Course, Material} from '../types/types';
-import {Link} from 'react-router-dom';
+import type {Module, Course, Material, CourseDetails, IMaterialsVisited} from '../types/types';
+import {Link, useLocation, useParams} from 'react-router-dom';
+import {viewCourseDetails} from '../api/courses';
+import {viewMaterialsVisited} from '../api/materialVisited';
 // TypeScript interfaces
 
 const CourseDetailsPage: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<'overview' | 'modules' | 'progress'>('overview');
+	const [course, setCourses] = useState<CourseDetails>();
+	const [materialVisited, setMaterialVisited] = useState<IMaterialsVisited[]>([]);
+	const location = useLocation();
 
-	// Sample course data
-	const course: Course = {
-		id: 1,
-		title: 'Aksara Batak Fundamentals',
-		description:
-			'Master the ancient Batak script with comprehensive lessons covering history, writing techniques, and cultural significance. This course provides a solid foundation for reading and writing traditional Batak characters.',
-		created_by: 'Dr. Mangihut Sirait',
-		created_at: '2024-01-15',
-		instructor: 'Dr. Mangihut Sirait',
-		duration: '4 hours',
-		level: 'Beginner',
-		students: 245,
-		rating: 4.8,
-		progress: 65,
-		modules: [
-			{
-				id: 1,
-				title: 'Introduction to Aksara Batak',
-				description: 'Learn the basics of Batak script, its history and cultural importance',
-				course_id: 1,
-				completed: true,
-				progress: 100,
-				materials: [
-					{
-						id: 1,
-						title: 'History of Batak Script',
-						content: 'The origins and evolution of Aksara Batak...',
-						type: 'article',
-						created_at: '2024-01-15',
-					},
-					{
-						id: 2,
-						title: 'Batak Script Overview',
-						content: '',
-						media_url: 'https://example.com/batak-overview.jpg',
-						type: 'image',
-						created_at: '2024-01-15',
-					},
-				],
-				quiz: {
-					id: 1,
-					title: 'Introduction Quiz',
-					module_id: 1,
-					created_at: '2024-01-15',
-					score: 85,
-					completed: true,
-				},
-			},
-			{
-				id: 2,
-				title: 'Basic Characters and Symbols',
-				description: 'Master the fundamental characters used in Batak writing',
-				course_id: 1,
-				completed: true,
-				progress: 100,
-				materials: [
-					{
-						id: 3,
-						title: 'Basic Consonants',
-						content: 'Learn the primary consonant characters...',
-						type: 'article',
-						created_at: '2024-01-16',
-					},
-					{
-						id: 4,
-						title: 'Writing Practice Video',
-						content: '',
-						media_url: 'https://www.youtube.com/watch?v=example',
-						type: 'youtube',
-						created_at: '2024-01-16',
-					},
-				],
-				quiz: {
-					id: 2,
-					title: 'Basic Characters Quiz',
-					module_id: 2,
-					created_at: '2024-01-16',
-					score: 92,
-					completed: true,
-				},
-			},
-			{
-				id: 3,
-				title: 'Vowels and Diacritics',
-				description: 'Understanding vowel marks and their proper usage',
-				course_id: 1,
-				completed: false,
-				progress: 60,
-				materials: [
-					{
-						id: 5,
-						title: 'Vowel Systems',
-						content: 'Complete guide to Batak vowel marks...',
-						type: 'article',
-						created_at: '2024-01-17',
-					},
-					{
-						id: 6,
-						title: 'Diacritics Tutorial',
-						content: '',
-						media_url: 'https://example.com/diacritics.mp4',
-						type: 'video',
-						created_at: '2024-01-17',
-					},
-				],
-				quiz: {
-					id: 3,
-					title: 'Vowels and Diacritics Quiz',
-					module_id: 3,
-					created_at: '2024-01-17',
-					completed: false,
-				},
-			},
-			{
-				id: 4,
-				title: 'Word Formation',
-				description: 'Learn to combine characters into meaningful words',
-				course_id: 1,
-				completed: false,
-				progress: 0,
-				materials: [
-					{
-						id: 7,
-						title: 'Word Structure Rules',
-						content: 'Understanding how Batak words are formed...',
-						type: 'article',
-						created_at: '2024-01-18',
-					},
-				],
-				quiz: {
-					id: 4,
-					title: 'Word Formation Quiz',
-					module_id: 4,
-					created_at: '2024-01-18',
-					completed: false,
-				},
-			},
-		],
+	const {id_course} = useParams();
+
+	useEffect(() => {
+		const viewAll = async () => {
+			try {
+				const res = await viewCourseDetails(Number(id_course));
+				setCourses(res.data);
+			} catch (err) {
+				alert(`Error : ${err}`);
+				console.log('Error : ', err);
+			}
+		};
+
+		viewAll();
+	}, []);
+
+	useEffect(() => {
+		const getMaterialVisited = async () => {
+			if (!course) {
+				return;
+			}
+
+			try {
+				const materialIds: number[] = course.modules.map((m) => m.id);
+				await viewMaterialsVisited(materialIds, setMaterialVisited);
+			} catch (err) {
+				alert(`Error : ${err}`);
+				console.log('Error getting material visited : ', err);
+			}
+		};
+
+		getMaterialVisited();
+	}, [course]);
+
+	// // Sample course data
+	// const course: Course = {
+	// 	id: 1,
+	// 	title: 'Aksara Batak Fundamentals',
+	// 	description:
+	// 		'Master the ancient Batak script with comprehensive lessons covering history, writing techniques, and cultural significance. This course provides a solid foundation for reading and writing traditional Batak characters.',
+	// 	created_by: 'Dr. Mangihut Sirait',
+	// 	created_at: '2024-01-15',
+	// 	instructor: 'Dr. Mangihut Sirait',
+	// 	duration: '4 hours',
+	// 	level: 'Beginner',
+	// 	students: 245,
+	// 	rating: 4.8,
+	// 	progress: 65,
+	// 	modules: [
+	// 		{
+	// 			id: 1,
+	// 			title: 'Introduction to Aksara Batak',
+	// 			description: 'Learn the basics of Batak script, its history and cultural importance',
+	// 			course_id: 1,
+	// 			completed: true,
+	// 			progress: 100,
+	// 			materials: [
+	// 				{
+	// 					id: 1,
+	// 					title: 'History of Batak Script',
+	// 					content: 'The origins and evolution of Aksara Batak...',
+	// 					type: 'article',
+	// 					created_at: '2024-01-15',
+	// 				},
+	// 				{
+	// 					id: 2,
+	// 					title: 'Batak Script Overview',
+	// 					content: '',
+	// 					media_url: 'https://example.com/batak-overview.jpg',
+	// 					type: 'image',
+	// 					created_at: '2024-01-15',
+	// 				},
+	// 			],
+	// 			quiz: {
+	// 				id: 1,
+	// 				title: 'Introduction Quiz',
+	// 				module_id: 1,
+	// 				created_at: '2024-01-15',
+	// 				score: 85,
+	// 				completed: true,
+	// 			},
+	// 		},
+	// 		{
+	// 			id: 2,
+	// 			title: 'Basic Characters and Symbols',
+	// 			description: 'Master the fundamental characters used in Batak writing',
+	// 			course_id: 1,
+	// 			completed: true,
+	// 			progress: 100,
+	// 			materials: [
+	// 				{
+	// 					id: 3,
+	// 					title: 'Basic Consonants',
+	// 					content: 'Learn the primary consonant characters...',
+	// 					type: 'article',
+	// 					created_at: '2024-01-16',
+	// 				},
+	// 				{
+	// 					id: 4,
+	// 					title: 'Writing Practice Video',
+	// 					content: '',
+	// 					media_url: 'https://www.youtube.com/watch?v=example',
+	// 					type: 'youtube',
+	// 					created_at: '2024-01-16',
+	// 				},
+	// 			],
+	// 			quiz: {
+	// 				id: 2,
+	// 				title: 'Basic Characters Quiz',
+	// 				module_id: 2,
+	// 				created_at: '2024-01-16',
+	// 				score: 92,
+	// 				completed: true,
+	// 			},
+	// 		},
+	// 		{
+	// 			id: 3,
+	// 			title: 'Vowels and Diacritics',
+	// 			description: 'Understanding vowel marks and their proper usage',
+	// 			course_id: 1,
+	// 			completed: false,
+	// 			progress: 60,
+	// 			materials: [
+	// 				{
+	// 					id: 5,
+	// 					title: 'Vowel Systems',
+	// 					content: 'Complete guide to Batak vowel marks...',
+	// 					type: 'article',
+	// 					created_at: '2024-01-17',
+	// 				},
+	// 				{
+	// 					id: 6,
+	// 					title: 'Diacritics Tutorial',
+	// 					content: '',
+	// 					media_url: 'https://example.com/diacritics.mp4',
+	// 					type: 'video',
+	// 					created_at: '2024-01-17',
+	// 				},
+	// 			],
+	// 			quiz: {
+	// 				id: 3,
+	// 				title: 'Vowels and Diacritics Quiz',
+	// 				module_id: 3,
+	// 				created_at: '2024-01-17',
+	// 				completed: false,
+	// 			},
+	// 		},
+	// 		{
+	// 			id: 4,
+	// 			title: 'Word Formation',
+	// 			description: 'Learn to combine characters into meaningful words',
+	// 			course_id: 1,
+	// 			completed: false,
+	// 			progress: 0,
+	// 			materials: [
+	// 				{
+	// 					id: 7,
+	// 					title: 'Word Structure Rules',
+	// 					content: 'Understanding how Batak words are formed...',
+	// 					type: 'article',
+	// 					created_at: '2024-01-18',
+	// 				},
+	// 			],
+	// 			quiz: {
+	// 				id: 4,
+	// 				title: 'Word Formation Quiz',
+	// 				module_id: 4,
+	// 				created_at: '2024-01-18',
+	// 				completed: false,
+	// 			},
+	// 		},
+	// 	],
+	// };
+	const filteredCourse: CourseDetails = {
+		...course!,
+		modules: course?.modules
+			? course.modules.map((m) => ({
+					...m,
+					completed: materialVisited.some((v) => v.materials_id === m.id),
+			  }))
+			: [], // fallback if course.modules is undefined
 	};
 
-	const completedModules = course.modules.filter((module) => module.completed).length;
-	const totalMaterials = course.modules.reduce((total, module) => total + module.materials.length, 0);
+	const progress = () => {
+		if (!course) return 0;
+
+		const materialIdsVisited = materialVisited.map((v) => v.materials_id); // flat list
+		const moduleMaterialIds = course.modules.map((m) => m.id); // also flat list
+
+		const visitedCount = moduleMaterialIds.filter((id) => materialIdsVisited.includes(id)).length;
+		const totalCount = moduleMaterialIds.length;
+
+		const percent = (visitedCount / totalCount) * 100;
+
+		return percent;
+	};
+
+	const completedModules = filteredCourse?.modules.filter((module) => module.completed).length;
+	const totalMaterials = filteredCourse?.modules.reduce((total, module) => total + module.materials.length, 0);
 
 	const getModuleIcon = (module: Module) => {
 		if (module.completed) return <CheckCircle className="w-5 h-5 text-green-500" />;
-		if (module.progress > 0) return <Play className="w-5 h-5 text-blue-500" />;
+		if (progress() > 0) return <Play className="w-5 h-5 text-blue-500" />;
 		return <Lock className="w-5 h-5 text-gray-400" />;
 	};
 
@@ -186,11 +248,11 @@ const CourseDetailsPage: React.FC = () => {
 							</button>
 						</div>
 						<div className="flex items-center space-x-4">
-							<div className="flex items-center space-x-1">
+							{/* <div className="flex items-center space-x-1">
 								<Star className="w-4 h-4 text-yellow-500 fill-current" />
 								<span className="text-sm font-medium">{course.rating}</span>
-							</div>
-							<span className="text-sm text-gray-500">{course.students} students</span>
+							</div> */}
+							{/* <span className="text-sm text-gray-500">{course.students} students</span> */}
 						</div>
 					</div>
 				</div>
@@ -204,20 +266,20 @@ const CourseDetailsPage: React.FC = () => {
 						<div className="bg-white rounded-lg shadow-sm p-6 mb-6">
 							<div className="flex items-start justify-between mb-4">
 								<div>
-									<h1 className="text-3xl font-bold text-gray-900 mb-2">{course.title}</h1>
-									<p className="text-gray-600 text-lg">{course.description}</p>
+									<h1 className="text-3xl font-bold text-gray-900 mb-2">{course?.title}</h1>
+									<p className="text-gray-600 text-lg">{course?.description}</p>
 								</div>
-								<span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">{course.level}</span>
+								<span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">{course?.kesulitan}</span>
 							</div>
 
 							<div className="flex items-center space-x-6 text-sm text-gray-500 mb-4">
 								<div className="flex items-center space-x-1">
 									<Clock className="w-4 h-4" />
-									<span>{course.duration}</span>
+									<span>{course?.durasi}</span>
 								</div>
 								<div className="flex items-center space-x-1">
 									<BookOpen className="w-4 h-4" />
-									<span>{course.modules.length} modules</span>
+									<span>{course?.modules.length} modules</span>
 								</div>
 								<div className="flex items-center space-x-1">
 									<FileText className="w-4 h-4" />
@@ -225,23 +287,23 @@ const CourseDetailsPage: React.FC = () => {
 								</div>
 								<div className="flex items-center space-x-1">
 									<Calendar className="w-4 h-4" />
-									<span>Created {new Date(course.created_at).toLocaleDateString()}</span>
+									<span>Created {new Date(course?.created_at || '').toLocaleDateString()}</span>
 								</div>
 							</div>
 
 							<div className="flex items-center justify-between">
 								<div className="flex items-center space-x-2">
 									<img
-										src={`https://ui-avatars.com/api/?name=${course.instructor}&background=10b981&color=fff`}
-										alt={course.instructor}
+										src={`https://ui-avatars.com/api/?name=${course?.author}&background=10b981&color=fff`}
+										alt={course?.author}
 										className="w-8 h-8 rounded-full"
 									/>
-									<span className="text-sm font-medium text-gray-900">{course.instructor}</span>
+									<span className="text-sm font-medium text-gray-900">{course?.author}</span>
 								</div>
 								<div className="flex items-center space-x-2">
-									<div className="text-sm text-gray-500">Progress: {course.progress}%</div>
+									<div className="text-sm text-gray-500">Progress: {progress()}%</div>
 									<div className="w-32 bg-gray-200 rounded-full h-2">
-										<div className="bg-green-500 h-2 rounded-full transition-all duration-300" style={{width: `${course.progress}%`}} />
+										<div className="bg-green-500 h-2 rounded-full transition-all duration-300" style={{width: `${progress()}%`}} />
 									</div>
 								</div>
 							</div>
@@ -325,7 +387,7 @@ const CourseDetailsPage: React.FC = () => {
 
 								{activeTab === 'modules' && (
 									<div className="space-y-4">
-										{course.modules.map((module, index) => (
+										{course?.modules.map((module, index) => (
 											<div key={module.id} className="border border-gray-200 rounded-lg p-4">
 												<div className="flex items-start justify-between mb-3">
 													<div className="flex items-center space-x-3">
@@ -338,9 +400,9 @@ const CourseDetailsPage: React.FC = () => {
 														</div>
 													</div>
 													<div className="flex items-center space-x-2 text-sm text-gray-500">
-														<span>{module.progress}%</span>
+														<span>{progress()}%</span>
 														<div className="w-16 bg-gray-200 rounded-full h-2">
-															<div className="bg-green-500 h-2 rounded-full" style={{width: `${module.progress}%`}} />
+															<div className="bg-green-500 h-2 rounded-full" style={{width: `${progress()}%`}} />
 														</div>
 													</div>
 												</div>
@@ -357,18 +419,20 @@ const CourseDetailsPage: React.FC = () => {
 													<div className="flex items-center space-x-2 text-sm mt-3">
 														<Award className="w-4 h-4 text-yellow-500" />
 														<span className="text-gray-700">{module.quiz.title}</span>
-														{module.quiz.completed && <span className="text-green-600 font-medium">(Score: {module.quiz.score}%)</span>}
+														{!module.quiz.lock && <span className="text-green-600 font-medium">(Score: {module.quiz.score}%)</span>}
 													</div>
 												</div>
 
 												<div className="mt-4 flex space-x-2">
-													<button
-														className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm"
-														disabled={!module.completed && index > 0 && !course.modules[index - 1].completed}
-													>
-														{module.completed ? 'Review Module' : 'Start Module'}
-													</button>
-													{module.quiz.completed && (
+													<Link to={`${location.pathname}/module/${module.id}`}>
+														<button
+															className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm"
+															disabled={!module.completed && index > 0 && !course.modules[index - 1].completed}
+														>
+															{module.completed ? 'Review Module' : 'Start Module'}
+														</button>
+													</Link>
+													{!module.quiz.lock && (
 														<button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
 															Retake Quiz
 														</button>
@@ -387,11 +451,11 @@ const CourseDetailsPage: React.FC = () => {
 												<div className="text-sm text-gray-600">Modules Completed</div>
 											</div>
 											<div className="bg-gray-50 p-4 rounded-lg">
-												<div className="text-2xl font-bold text-gray-900">{course.progress}%</div>
+												<div className="text-2xl font-bold text-gray-900">{progress()}%</div>
 												<div className="text-sm text-gray-600">Overall Progress</div>
 											</div>
 											<div className="bg-gray-50 p-4 rounded-lg">
-												<div className="text-2xl font-bold text-gray-900">{course.modules.filter((m) => m.quiz.completed).length}</div>
+												<div className="text-2xl font-bold text-gray-900">{course?.modules.filter((m) => !m.quiz.lock).length}</div>
 												<div className="text-sm text-gray-600">Quizzes Passed</div>
 											</div>
 										</div>
@@ -399,7 +463,7 @@ const CourseDetailsPage: React.FC = () => {
 										<div>
 											<h3 className="text-lg font-semibold mb-4">Module Progress</h3>
 											<div className="space-y-3">
-												{course.modules.map((module, index) => (
+												{course?.modules.map((module, index) => (
 													<div key={module.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 														<div className="flex items-center space-x-3">
 															{getModuleIcon(module)}
@@ -409,9 +473,9 @@ const CourseDetailsPage: React.FC = () => {
 														</div>
 														<div className="flex items-center space-x-3">
 															<div className="w-32 bg-gray-200 rounded-full h-2">
-																<div className="bg-green-500 h-2 rounded-full" style={{width: `${module.progress}%`}} />
+																<div className="bg-green-500 h-2 rounded-full" style={{width: `${progress()}%`}} />
 															</div>
-															<span className="text-sm font-medium w-12 text-right">{module.progress}%</span>
+															<span className="text-sm font-medium w-12 text-right">{progress()}%</span>
 														</div>
 													</div>
 												))}
@@ -430,12 +494,12 @@ const CourseDetailsPage: React.FC = () => {
 							<div className="space-y-4">
 								<div className="flex items-center justify-between">
 									<span className="text-gray-600">Total Progress</span>
-									<span className="font-medium">{course.progress}%</span>
+									<span className="font-medium">{progress()}%</span>
 								</div>
 								<div className="flex items-center justify-between">
 									<span className="text-gray-600">Completed Modules</span>
 									<span className="font-medium">
-										{completedModules}/{course.modules.length}
+										{completedModules}/{course?.modules.length}
 									</span>
 								</div>
 								<div className="flex items-center justify-between">
@@ -444,16 +508,16 @@ const CourseDetailsPage: React.FC = () => {
 								</div>
 								<div className="flex items-center justify-between">
 									<span className="text-gray-600">Quizzes Passed</span>
-									<span className="font-medium">{course.modules.filter((m) => m.quiz.completed).length}</span>
+									<span className="font-medium">{course?.modules.filter((m) => !m.quiz.lock).length}</span>
 								</div>
 							</div>
 
 							<div className="mt-6 pt-6 border-t border-gray-200">
 								<h4 className="font-semibold mb-3">Next Steps</h4>
 								<div className="text-sm text-gray-600">
-									{course.progress < 100 ? (
+									{progress() < 100 ? (
 										<div>
-											Continue with <span className="font-medium text-gray-900">{course.modules.find((m) => !m.completed)?.title}</span>
+											Continue with <span className="font-medium text-gray-900">{course?.modules.find((m) => !m.completed)?.title}</span>
 										</div>
 									) : (
 										<div className="text-green-600 font-medium">Course completed! 🎉</div>
