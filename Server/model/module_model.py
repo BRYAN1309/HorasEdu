@@ -8,3 +8,11 @@ class ModuleModel:
     @staticmethod
     def get_modules_by_course(course_id):
         return supabase.table("modules").select("*").eq("course_id", course_id).execute()
+    @staticmethod
+    def get_modules_materials(module_id):
+        return supabase.table("modules") \
+            .select("*, materials(*)") \
+            .eq("id", module_id) \
+            .single() \
+            .execute()
+            

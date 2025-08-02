@@ -78,3 +78,15 @@ class UserModel:
             }
         except Exception as e:
             raise Exception(f"Registration failed: {str(e)}")
+        
+    @staticmethod
+    def verify_token(token):
+        import jwt
+        from flask import current_app
+        try:
+            payload = jwt.decode(token, current_app.config["JWT_SECRET_KEY"], algorithms=["HS256"])
+            return {"user_id": payload["sub"]}
+        except jwt.ExpiredSignatureError:
+            return None
+        except jwt.InvalidTokenError:
+            return None
