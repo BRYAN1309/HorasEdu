@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {ArrowLeft, BookOpen, Play, Image, CheckCircle, Clock, FileText, Award, ChevronRight, PlayCircle} from 'lucide-react';
-import type {IMaterialsVisited, Module} from '../types/types';
-import {useParams} from 'react-router-dom';
+import {ArrowLeft, BookOpen, Play, Image, CheckCircle, Clock, FileText, Award, ChevronRight, PlayCircle, Lock} from 'lucide-react';
+import type {IMaterialsVisited, IUserQuiz, Module} from '../types/types';
+import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
 import {viewModule} from '../api/module';
 import {viewMaterialsVisited} from '../api/materialVisited';
+import {updateQuiz} from '../api/quiz';
+import {viewUserQuiz} from '../api/userQuiz';
 
 const ModulePage = () => {
 	const [completedItems, setCompletedItems] = useState<string[]>([]);
 	const [module, setModule] = useState<Module>();
 	const [materialVisited, setMaterialVisited] = useState<IMaterialsVisited[]>([]);
+	const [userQuiz, setUserQuiz] = useState<IUserQuiz>();
 	const {id_module} = useParams();
+	const location = useLocation();
 
 	useEffect(() => {
 		if (!id_module) {
@@ -18,7 +22,11 @@ const ModulePage = () => {
 
 		const viewAll = async () => {
 			try {
-				await viewModule(Number(id_module), setModule);
+				const res = await viewModule(Number(id_module));
+				setModule({
+					...res,
+					quiz: Array.isArray(res.quiz) ? res.quiz[0] : res.quiz,
+				});
 			} catch (err) {
 				alert(`Error : ${err}`);
 				console.log('Error view moduel : ', err);
@@ -27,32 +35,63 @@ const ModulePage = () => {
 
 		viewAll();
 		console.log('IM here');
-	}, []);
+	}, [id_module]);
 
 	useEffect(() => {
 		if (!module) {
 			return;
 		}
-
 		console.log('Module : ', module);
 
 		const viewMaterialVisited = async () => {
 			try {
 				const materialIds = module.materials.map((m) => m.id);
-				await viewMaterialsVisited(materialIds, setMaterialVisited);
+				const materialsVisited: IMaterialsVisited[] = await viewMaterialsVisited(materialIds, setMaterialVisited);
+
+				if (materialIds.length === materialsVisited.length && module.quiz.lock) {
+					// update quiz
+					await updateQuiz({lock: false}, module.quiz.id);
+					console.log('Quiz updated');
+				}
+
+				await viewUserQuiz(module.quiz.id, setUserQuiz);
 			} catch (err) {
 				alert('Erro view material visited');
 				console.log('Error view material visited : ', err);
 			}
 		};
 
-		viewMaterialVisited;
+		viewMaterialVisited();
 	}, [module]);
+
+	useEffect(() => {
+		if (materialVisited.length > 0 && module) {
+			if (materialVisited.length === module.materials.length && module.quiz.lock) {
+				const updateQuizLock = async () => {
+					try {
+						await updateQuiz({lock: false}, module.quiz.id);
+					} catch (err) {
+						alert('Error update quiz');
+						console.log('Error update quiz : ', err);
+					}
+				};
+
+				updateQuizLock();
+			}
+		}
+	}, [materialVisited, module]);
+
+	// Moved this useEffect up before any early returns
+	useEffect(() => {
+		if (materialVisited.length > 0) {
+			console.log('Materials visited : ', materialVisited);
+		}
+	}, [materialVisited]);
 
 	const progress = () => {
 		if (!materialVisited || !module) {
 			console.log('Data is undefined');
-			return;
+			return 0; // Return 0 instead of undefined
 		}
 
 		const materialVisitedIds = materialVisited.map((m) => m.id);
@@ -63,62 +102,6 @@ const ModulePage = () => {
 
 		return progressPercentage;
 	};
-
-	// const module? = {
-	// 	title: 'Module 1: Introduction to Aksara Batak',
-	// 	description: 'Learn the basics of Batak script, its history and cultural importance',
-	// 	progress: 60,
-	// 	duration: '45 minutes',
-	// 	materials: [
-	// 		{
-	// 			id: 'article-1',
-	// 			type: 'article',
-	// 			title: 'History of Batak Script',
-	// 			description: 'Explore the origins and evolution of Aksara Batak',
-	// 			duration: '8 min read',
-	// 			completed: true,
-	// 		},
-	// 		{
-	// 			id: 'video-1',
-	// 			type: 'video',
-	// 			title: 'Batak Script Overview',
-	// 			description: 'Video introduction to the fundamentals of Batak writing',
-	// 			duration: '12 min',
-	// 			completed: true,
-	// 		},
-	// 		{
-	// 			id: 'image-1',
-	// 			type: 'image',
-	// 			title: 'Basic Batak Characters',
-	// 			description: 'Visual guide to fundamental Aksara Batak symbols',
-	// 			duration: '5 min',
-	// 			completed: false,
-	// 		},
-	// 		{
-	// 			id: 'article-2',
-	// 			type: 'article',
-	// 			title: 'Cultural Significance',
-	// 			description: 'Understanding the cultural context of Batak script',
-	// 			duration: '10 min read',
-	// 			completed: false,
-	// 		},
-	// 		{
-	// 			id: 'video-2',
-	// 			type: 'video',
-	// 			title: 'Writing Techniques',
-	// 			description: 'Learn proper stroke order and writing methods',
-	// 			duration: '15 min',
-	// 			completed: false,
-	// 		},
-	// 	],
-	// 	quiz: {
-	// 		title: 'Introduction Quiz',
-	// 		description: 'Test your understanding of Batak script fundamentals',
-	// 		questions: 10,
-	// 		score: 85,
-	// 		completed: true,
-	// 	},
-	// };
 
 	const getIcon = (type: string) => {
 		switch (type) {
@@ -146,14 +129,26 @@ const ModulePage = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (userQuiz) {
+			console.log('User QUIZ : ', userQuiz);
+		}
+	}, [userQuiz]);
+
+	// Early returns moved to after all hooks
+	if (!module) return null;
+
 	const filteredModule: Module = {
 		...module!,
 		materials: (module?.materials ?? []).map((m) => ({
 			...m,
-			completed: materialVisited.some((e) => e.id === m.id),
+			completed: materialVisited.some((e) => e.materials_id === m.id),
 		})),
 	};
 
+	if (!filteredModule) return null;
+
+	console.log('Filtered Module : ', filteredModule);
 	return (
 		<div className="min-h-screen bg-gray-50">
 			{/* Header */}
@@ -202,69 +197,86 @@ const ModulePage = () => {
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
 					<h2 className="text-xl font-semibold text-gray-900 mb-4">Materials</h2>
 					<div className="space-y-3">
-						{filteredModule?.materials.map((material, index) => (
-							<div
-								key={material.id}
-								className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-							>
-								<div className={`p-2 rounded-lg ${getTypeColor(material.type)}`}>{getIcon(material.type)}</div>
+						{filteredModule?.materials.map((material) => {
+							console.log('Material : ', material);
+							return (
+								<Link key={material.id} to={`${location.pathname}/material/${material.id}`}>
+									<div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+										<div className={`p-2 rounded-lg ${getTypeColor(material.type)}`}>{getIcon(material.type)}</div>
 
-								<div className="flex-1">
-									<h3 className="font-medium text-gray-900">{material.title}</h3>
-									<p className="text-sm text-gray-600 mt-1">{material.description}</p>
-									<div className="flex items-center gap-2 mt-2">
-										<Clock className="w-4 h-4 text-gray-400" />
-										<span className="text-sm text-gray-500">{material.duration}</span>
+										<div className="flex-1">
+											<h3 className="font-medium text-gray-900">{material.title}</h3>
+											<p className="text-sm text-gray-600 mt-1">{material.description}</p>
+											<div className="flex items-center gap-2 mt-2">
+												<Clock className="w-4 h-4 text-gray-400" />
+												<span className="text-sm text-gray-500">{material.duration}</span>
+											</div>
+										</div>
+
+										<div className="flex items-center gap-2">
+											{material.completed ? (
+												<CheckCircle className="w-6 h-6 text-green-500" />
+											) : (
+												<div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+											)}
+											<ChevronRight className="w-5 h-5 text-gray-400" />
+										</div>
 									</div>
-								</div>
-
-								<div className="flex items-center gap-2">
-									{material.completed ? (
-										<CheckCircle className="w-6 h-6 text-green-500" />
-									) : (
-										<div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
-									)}
-									<ChevronRight className="w-5 h-5 text-gray-400" />
-								</div>
-							</div>
-						))}
+								</Link>
+							);
+						})}
 					</div>
 				</div>
 
 				{/* Quiz Section */}
-				{filteredModule?.quiz &&
-					filteredModule.quiz.map((q, index) => (
-						<div key={q.id || index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
-							<h2 className="text-xl font-semibold text-gray-900 mb-4">Assessment</h2>
-							<div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-								<div className="p-2 rounded-lg bg-yellow-100 text-yellow-600">
-									<Award className="w-5 h-5" />
-								</div>
+				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
+					<h2 className="text-xl font-semibold text-gray-900 mb-4">Assessment</h2>
 
-								<div className="flex-1">
-									<h3 className="font-medium text-gray-900">{q.title}</h3>
-									<p className="text-sm text-gray-600 mt-1">{q.description}</p>
-									<div className="flex items-center gap-4 mt-2">
-										{!q.lock && <span className="text-sm text-green-600 font-medium">Score: {q.score}%</span>}
-									</div>
-								</div>
+					<Link to={!filteredModule.quiz.lock ? `${location.pathname}/quiz/${filteredModule.quiz.id}` : `#`}>
+						<div
+							className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+							onClick={() => {
+								if (filteredModule.quiz.lock) {
+									alert('Semua maeterial perlu dipelajari terlebih dahulu.');
+									return;
+								}
+							}}
+						>
+							<div className="p-2 rounded-lg bg-yellow-100 text-yellow-600">
+								<Award className="w-5 h-5" />
+							</div>
 
-								<div className="flex items-center gap-2">
-									{!q.lock ? (
-										<div className="flex items-center gap-1">
-											<CheckCircle className="w-6 h-6 text-green-500" />
-											<span className="text-sm text-green-600 font-medium">Completed</span>
-										</div>
-									) : (
-										<button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-											Start Quiz
-										</button>
+							<div className="flex-1">
+								<h3 className="font-medium text-gray-900">{filteredModule.quiz.title || ''}</h3>
+								<p className="text-sm text-gray-600 mt-1">{filteredModule.quiz.description || ''}</p>
+								<div className="flex items-center gap-4 mt-2">
+									{!filteredModule.quiz.lock && (
+										<span className="text-sm text-green-600 font-medium">Score: {filteredModule.quiz.score}%</span>
 									)}
-									<ChevronRight className="w-5 h-5 text-gray-400" />
 								</div>
 							</div>
+
+							<div className="flex items-center gap-2">
+								{filteredModule.quiz.lock ? (
+									<div className="flex items-center gap-1">
+										<Lock className="w-6 h-6 text-gray-500" />
+										<span className="text-sm text-gray-500 font-medium">Terkunci</span>
+									</div>
+								) : userQuiz ? (
+									<div className="flex items-center gap-1">
+										<CheckCircle className="w-6 h-6 text-gray-500" />
+										<span className="text-sm text-gray-500 font-medium">{userQuiz.score}%</span>
+									</div>
+								) : (
+									<button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors hover:cursor-pointer">
+										Start Quiz
+									</button>
+								)}
+								<ChevronRight className="w-5 h-5 text-gray-400" />
+							</div>
 						</div>
-					))}
+					</Link>
+				</div>
 
 				{/* Action Buttons */}
 				<div className="flex justify-between items-center mt-8">

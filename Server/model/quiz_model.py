@@ -4,7 +4,19 @@ class QuizModel:
     @staticmethod
     def create_quiz(data):
         return supabase.table("quiz").insert(data).execute()
+
+    @staticmethod
+    def update_quiz(data, quiz_id):
+        return supabase.table("quiz").update(data).eq("id", quiz_id).execute()
+
     @staticmethod
     def get_all_quizzes_by_modules(module_id):
         return supabase.table("quiz").select("*").eq("module_id",module_id).execute()
-    
+
+    @staticmethod
+    def get_quiz(quiz_id):
+        return supabase.table("quiz") \
+            .select("*, questions(*)") \
+            .eq("id", quiz_id).single() \
+            .execute()
+        

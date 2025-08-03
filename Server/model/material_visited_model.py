@@ -7,8 +7,10 @@ class MaterialVisitedModel:
         return supabase.table("material_visited").insert(data).execute()
 
     @staticmethod
-    def get_all_materials_visited(material_ids: List[int]):
+    def get_all_materials_visited(material_ids: List[int], user_id: int):
         return supabase.table("material_visited") \
             .select("*") \
             .in_("materials_id", material_ids) \
+            .eq("user_id", user_id) \
             .execute()
+            

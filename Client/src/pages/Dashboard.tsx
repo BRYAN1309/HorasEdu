@@ -6,6 +6,7 @@ import type {Course, CourseDetails} from '../types/types';
 import {viewAllCourse, viewCourseDetails} from '../api/courses';
 import CoursePreviewModal from '../components/CoursePreview';
 import {enrollCourse, viewUserCourse} from '../api/userCourse';
+import {viewMaterialsVisited} from '../api/materialVisited';
 
 const Dashboard = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -13,6 +14,7 @@ const Dashboard = () => {
 	const [isPreview, setIsPreview] = useState<boolean>(false);
 	const [selectedCourse, setSelectedCourse] = useState<CourseDetails>();
 	const [userCourses, setUserCourses] = useState<Course[]>([]);
+
 	// Sample course data
 	// const courses = [
 	//     {

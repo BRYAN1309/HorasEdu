@@ -92,3 +92,23 @@ def submit_quiz(quiz_id):
 
     except Exception as e:
         return error_response(str(e))
+
+def get_user_quiz(quiz_id):
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return error_response("Missing or invalid token")
+        token = auth_header.split(" ")[1]
+        token_data = UserModel.verify_token(token)
+        if not token_data:
+            return error_response("Invalid or expired token")
+        user_id = token_data["user_id"]
+        
+        res = UserQuizModel.get_user_quiz(user_id, quiz_id)
+
+        if (not res.data):
+            res.data = None
+            
+        return success_response("Get user's quiz success", res.data)
+    except Exception as e:
+        return error_response(str(e))

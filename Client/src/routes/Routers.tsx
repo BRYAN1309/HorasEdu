@@ -1,17 +1,17 @@
 import {createBrowserRouter, Navigate} from 'react-router-dom';
 import App from '../App';
-import ProtectedRoute from '../pages/Protected';
 import NotFound from '../pages/NotFound';
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import Register from '../pages/Register';
 import Courses from '../pages/Courses';
 import CourseDetailsPage from '../pages/CourseDetail';
-import Material from '../pages/Material';
-import Quiz from '../pages/Quiz';
+
+import QuizPage from '../pages/Quiz';
 import LandingPage from '../pages/LandingPage';
 import ProfilePage from '../pages/Profile';
 import ModulePage from '../pages/Module';
+import MaterialPage from '../pages/Material';
 
 const router = createBrowserRouter([
 	{
@@ -49,11 +49,11 @@ const router = createBrowserRouter([
 							},
 							{
 								path: '/courses/:id_course/module/:id_module/material/:id_material',
-								element: <Material />,
+								element: <MaterialPage />,
 							},
 							{
 								path: '/courses/:id_course/module/:id_module/quiz/:id_quiz',
-								element: <Quiz />,
+								element: <QuizPage />,
 							},
 							{
 								path: '/profile/:user_id',

@@ -36,8 +36,19 @@ def create_material_visited():
     
 def get_materials_visited():
     try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return error_response("Missing or invalid token")
+        
+        token = auth_header.split(" ")[1]
+        token_data = UserModel.verify_token(token)
+        if not token_data:
+            return error_response("Invalid or expired token")
+        
+        user_id = token_data["user_id"]
+        
         material_ids = request.args.getlist('material_ids', type=int)
-        res = MaterialVisitedModel.get_all_materials_visited(material_ids=material_ids)
+        res = MaterialVisitedModel.get_all_materials_visited(material_ids=material_ids, user_id=user_id)
         return success_response("Material Visited", res.data)
     except Exception as e:
         return error_response(str(e))

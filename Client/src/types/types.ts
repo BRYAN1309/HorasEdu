@@ -27,6 +27,7 @@ export interface Material {
 	duration: number;
 	created_at: string;
 	type: 'article' | 'video' | 'image' | 'youtube';
+	order: number;
 	completed: boolean;
 }
 
@@ -39,9 +40,36 @@ export interface Quiz {
 	lock: boolean;
 	duration: number;
 	pass_score: number;
-	type: 'final' | 'normal';
 	description: string;
 	questions: Question[];
+}
+
+export interface FinalExam {
+	id: number;
+	title: string;
+	course_id: number;
+	created_at: string;
+	score?: number;
+	lock: boolean;
+	duration: number;
+	pass_score: number;
+	description: string;
+	questions: FinalExamQuestions[];
+}
+
+export interface FinalExamQuestions {
+	id: number;
+	final_exam_id: number;
+	questions_text: string;
+	option_a: string;
+	option_b: string;
+	option_c: string;
+	option_d: string;
+	correct_answer: string;
+	correct_answer_value: string;
+	explanation: string;
+	created_at: string;
+	url_image: string;
 }
 
 export interface Question {
@@ -59,6 +87,8 @@ export interface Question {
 	url_image: string;
 }
 
+export type OptionKey = 'option_a' | 'option_b' | 'option_c' | 'option_d';
+
 export interface Module {
 	id: number;
 	title: string;
@@ -69,7 +99,7 @@ export interface Module {
 	course_id: number;
 	materials: Material[];
 	completed: boolean;
-	quiz: Quiz[];
+	quiz: Quiz;
 }
 
 export interface Course {
@@ -128,4 +158,13 @@ export interface IQuizVisited {
 	user_id: number;
 	module_id: number;
 	created_at: string;
+}
+
+export interface IUserQuiz {
+	id: number;
+	created_at: Date;
+	updated_at: Date;
+	user_id: number;
+	quiz_id: number;
+	score: number;
 }
