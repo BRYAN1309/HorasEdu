@@ -13,9 +13,10 @@ export const viewModule = async (moduleId: number) => {
 	}
 };
 
-const viewAllModules = async () => {
+export const viewAllModules = async (setter: React.Dispatch<React.SetStateAction<Module[]>>) => {
 	try {
-		const res = await axios.get(`/modules`);
+		const res = await axios.get(`/modules/view`);
+		setter(res.data.data);
 		return res.data;
 	} catch (err) {
 		throw err;

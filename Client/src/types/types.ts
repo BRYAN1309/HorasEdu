@@ -153,6 +153,13 @@ export interface IMaterialsVisited {
 	created_at: string;
 }
 
+export interface IModuleVisited {
+	id: number;
+	user_id: number;
+	module_id: number;
+	created_at: string;
+}
+
 export interface IQuizVisited {
 	id: number;
 	user_id: number;

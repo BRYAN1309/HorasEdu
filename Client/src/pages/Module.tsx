@@ -4,7 +4,6 @@ import type {IMaterialsVisited, IUserQuiz, Module} from '../types/types';
 import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
 import {viewModule} from '../api/module';
 import {viewMaterialsVisited} from '../api/materialVisited';
-import {updateQuiz} from '../api/quiz';
 import {viewUserQuiz} from '../api/userQuiz';
 
 const ModulePage = () => {
@@ -13,6 +12,7 @@ const ModulePage = () => {
 	const [materialVisited, setMaterialVisited] = useState<IMaterialsVisited[]>([]);
 	const [userQuiz, setUserQuiz] = useState<IUserQuiz>();
 	const {id_module} = useParams();
+	const [isQuizLocked, setIsQuizLocked] = useState<boolean>(true);
 	const location = useLocation();
 
 	useEffect(() => {
@@ -38,6 +38,10 @@ const ModulePage = () => {
 	}, [id_module]);
 
 	useEffect(() => {
+		console.log('USER QUIZ : ', userQuiz);
+	}, [userQuiz]);
+
+	useEffect(() => {
 		if (!module) {
 			return;
 		}
@@ -48,10 +52,8 @@ const ModulePage = () => {
 				const materialIds = module.materials.map((m) => m.id);
 				const materialsVisited: IMaterialsVisited[] = await viewMaterialsVisited(materialIds, setMaterialVisited);
 
-				if (materialIds.length === materialsVisited.length && module.quiz.lock) {
-					// update quiz
-					await updateQuiz({lock: false}, module.quiz.id);
-					console.log('Quiz updated');
+				if (materialIds.length === materialsVisited.length) {
+					setIsQuizLocked(false);
 				}
 
 				await viewUserQuiz(module.quiz.id, setUserQuiz);
@@ -66,39 +68,27 @@ const ModulePage = () => {
 
 	useEffect(() => {
 		if (materialVisited.length > 0 && module) {
-			if (materialVisited.length === module.materials.length && module.quiz.lock) {
-				const updateQuizLock = async () => {
-					try {
-						await updateQuiz({lock: false}, module.quiz.id);
-					} catch (err) {
-						alert('Error update quiz');
-						console.log('Error update quiz : ', err);
-					}
-				};
-
-				updateQuizLock();
+			if (materialVisited.length === module.materials.length) {
+				setIsQuizLocked(false);
 			}
 		}
 	}, [materialVisited, module]);
 
-	// Moved this useEffect up before any early returns
-	useEffect(() => {
-		if (materialVisited.length > 0) {
-			console.log('Materials visited : ', materialVisited);
-		}
-	}, [materialVisited]);
-
 	const progress = () => {
 		if (!materialVisited || !module) {
 			console.log('Data is undefined');
-			return 0; // Return 0 instead of undefined
+			return 0;
 		}
 
-		const materialVisitedIds = materialVisited.map((m) => m.id);
+		const materialVisitedIds = materialVisited.map((m) => m.materials_id);
 		const moduleMaterialIds = module?.materials.map((m) => m.id);
+
+		console.log('Material visited ids : ', materialVisitedIds);
+		console.log('Module material ids : ', moduleMaterialIds);
 
 		const totalVisited = moduleMaterialIds?.filter((id) => materialVisitedIds.includes(id)).length || 0;
 		const progressPercentage = moduleMaterialIds?.length ? (totalVisited / moduleMaterialIds?.length) * 100 : 0;
+		console.log('PROGRESS PERCENTAGE : ', progressPercentage);
 
 		return progressPercentage;
 	};
@@ -129,21 +119,18 @@ const ModulePage = () => {
 		}
 	};
 
-	useEffect(() => {
-		if (userQuiz) {
-			console.log('User QUIZ : ', userQuiz);
-		}
-	}, [userQuiz]);
-
 	// Early returns moved to after all hooks
 	if (!module) return null;
 
 	const filteredModule: Module = {
 		...module!,
-		materials: (module?.materials ?? []).map((m) => ({
-			...m,
-			completed: materialVisited.some((e) => e.materials_id === m.id),
-		})),
+		materials: (module?.materials ?? [])
+			.slice() // make a shallow copy to avoid mutating original
+			.sort((a, b) => a.order - b.order) // sort by order ascending
+			.map((m) => ({
+				...m,
+				completed: materialVisited.some((e) => e.materials_id === m.id),
+			})),
 	};
 
 	if (!filteredModule) return null;
@@ -157,7 +144,9 @@ const ModulePage = () => {
 					<div className="flex items-center gap-4">
 						<button className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
 							<ArrowLeft className="w-5 h-5" />
-							<span>Back to Course</span>
+							<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
+								<span>Back to Course</span>
+							</Link>
 						</button>
 					</div>
 				</div>
@@ -201,7 +190,7 @@ const ModulePage = () => {
 							console.log('Material : ', material);
 							return (
 								<Link key={material.id} to={`${location.pathname}/material/${material.id}`}>
-									<div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+									<div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer mb-4">
 										<div className={`p-2 rounded-lg ${getTypeColor(material.type)}`}>{getIcon(material.type)}</div>
 
 										<div className="flex-1">
@@ -232,7 +221,15 @@ const ModulePage = () => {
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
 					<h2 className="text-xl font-semibold text-gray-900 mb-4">Assessment</h2>
 
-					<Link to={!filteredModule.quiz.lock ? `${location.pathname}/quiz/${filteredModule.quiz.id}` : `#`}>
+					<Link
+						to={isQuizLocked ? '#' : `${location.pathname}/quiz/${filteredModule.quiz.id}`}
+						onClick={(e) => {
+							if (isQuizLocked) {
+								e.preventDefault(); // ⛔ Stop navigation
+								alert('Semua material perlu dipelajari terlebih dahulu.');
+							}
+						}}
+					>
 						<div
 							className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
 							onClick={() => {
@@ -250,22 +247,20 @@ const ModulePage = () => {
 								<h3 className="font-medium text-gray-900">{filteredModule.quiz.title || ''}</h3>
 								<p className="text-sm text-gray-600 mt-1">{filteredModule.quiz.description || ''}</p>
 								<div className="flex items-center gap-4 mt-2">
-									{!filteredModule.quiz.lock && (
-										<span className="text-sm text-green-600 font-medium">Score: {filteredModule.quiz.score}%</span>
-									)}
+									{!filteredModule.quiz.lock && <span className="text-sm text-green-600 font-medium">Score: {userQuiz?.score || 0}%</span>}
 								</div>
 							</div>
 
 							<div className="flex items-center gap-2">
-								{filteredModule.quiz.lock ? (
+								{isQuizLocked ? (
 									<div className="flex items-center gap-1">
 										<Lock className="w-6 h-6 text-gray-500" />
 										<span className="text-sm text-gray-500 font-medium">Terkunci</span>
 									</div>
 								) : userQuiz ? (
 									<div className="flex items-center gap-1">
-										<CheckCircle className="w-6 h-6 text-gray-500" />
-										<span className="text-sm text-gray-500 font-medium">{userQuiz.score}%</span>
+										<CheckCircle className="w-6 h-6 text-green-500" />
+										<span className="text-sm text-green-500 font-medium">{userQuiz.score}%</span>
 									</div>
 								) : (
 									<button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors hover:cursor-pointer">

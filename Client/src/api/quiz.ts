@@ -31,3 +31,13 @@ export const updateQuiz = async (payload: Partial<Quiz>, quiz_id: number) => {
 		throw err;
 	}
 };
+
+export const submitQuiz = async (score: number, quiz_id: number) => {
+	try {
+		const res = await api.post(`/quiz/submit/${quiz_id}`, {score: score});
+		console.log(res.data);
+		return res.data;
+	} catch (err) {
+		throw err;
+	}
+};

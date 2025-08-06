@@ -10,6 +10,10 @@ class ModuleModel:
         return supabase.table("modules").select("*").eq("course_id", course_id).execute()
 
     @staticmethod
+    def get_all_modules():
+        return supabase.table("modules").select("*").execute()
+
+    @staticmethod
     def get_module(module_id):
         response = supabase.table("modules") \
             .select("*, quiz!quiz_module_id_fkey(*, questions(*)), materials(*)") \

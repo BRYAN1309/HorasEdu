@@ -24,6 +24,13 @@ def get_modules_materials(module_id):
     except Exception as e:
         return error_response(str(e))
 
+def get_all_modules():
+    try:
+        res = ModuleModel.get_all_modules()
+        return success_response("Modules materials retrieved", res.data)
+    except Exception as e:
+        return error_response(str(e))
+
 def get_module(module_id):
     try:
         res = ModuleModel.get_module(module_id)

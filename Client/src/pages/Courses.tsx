@@ -2,10 +2,12 @@ import {useEffect, useState} from 'react';
 import {Search, Plus, BookOpen, Users, Clock, Award, Grid, List, Copyright} from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import type {Course, CourseDetails} from '../types/types';
+import type {Course, CourseDetails, IModuleVisited, Module} from '../types/types';
 import {viewAllCourse, viewCourseDetails} from '../api/courses';
 import {viewUserCourse} from '../api/userCourse';
 import {Link, useLoaderData, useLocation, useNavigate} from 'react-router-dom';
+import {viewModulesVisited} from '../api/moduleVisited';
+import {viewAllModules} from '../api/module';
 
 const Courses = () => {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -73,7 +75,6 @@ const Courses = () => {
 			try {
 				await viewUserCourse(setUserCourse);
 				const res = await viewCourseDetails();
-
 				setCourses(res.data);
 			} catch (err) {
 				alert(`Error : ${err}`);

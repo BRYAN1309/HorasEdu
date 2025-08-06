@@ -12,8 +12,8 @@ import {
 	Target,
 	AlertCircle,
 } from 'lucide-react';
-import {useParams} from 'react-router-dom';
-import {viewQuiz} from '../api/quiz';
+import {Link, useParams} from 'react-router-dom';
+import {submitQuiz, viewQuiz} from '../api/quiz';
 import type {OptionKey, Quiz} from '../types/types';
 
 const QuizPage = () => {
@@ -61,12 +61,15 @@ const QuizPage = () => {
 		}));
 	};
 
-	const handleSubmitQuiz = () => {
+	const handleSubmitQuiz = async () => {
 		try {
-			// const res = await updateQuiz
+			const res = await submitQuiz(calculateScore(), quiz.id);
+			console.log('Submit quiz response : ', res);
 		} catch (err) {
 			alert('Error submit quiz');
 			console.log('Error submit quiz : ', err);
+		} finally {
+			setShowResults(true);
 		}
 	};
 
@@ -103,7 +106,9 @@ const QuizPage = () => {
 						<div className="flex items-center gap-4">
 							<button className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
 								<ArrowLeft className="w-5 h-5" />
-								<span>Back to Module</span>
+								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
+									<span>Back to Module</span>
+								</Link>
 							</button>
 						</div>
 					</div>
@@ -172,7 +177,9 @@ const QuizPage = () => {
 						<div className="flex items-center gap-4">
 							<button className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
 								<ArrowLeft className="w-5 h-5" />
-								<span>Back to Module</span>
+								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
+									<span>Back to Module</span>
+								</Link>
 							</button>
 						</div>
 					</div>
@@ -278,7 +285,9 @@ const QuizPage = () => {
 						<div className="flex items-center gap-4">
 							<button className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
 								<ArrowLeft className="w-5 h-5" />
-								<span>Back to Module</span>
+								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
+									<span>Back to Module</span>
+								</Link>
 							</button>
 						</div>
 
@@ -370,7 +379,7 @@ const QuizPage = () => {
 
 					{currentQuestion === quiz.questions.length - 1 ? (
 						<button
-							onClick={() => setShowResults(true)}
+							onClick={async () => await handleSubmitQuiz()}
 							disabled={Object.keys(selectedAnswers).length !== quiz.questions.length}
 							className={`flex items-center gap-2 px-6 py-2 rounded-lg transition-colors hover:cursor-pointer ${
 								Object.keys(selectedAnswers).length !== quiz.questions.length
