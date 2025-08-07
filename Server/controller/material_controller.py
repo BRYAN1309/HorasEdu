@@ -15,14 +15,13 @@ def create_material():
     except Exception as e:
         return error_response(str(e))
 
-
 def get_materials():
     try:
-        res = MaterialModel.get_all_materials()
-        return success_response("Material list", res.data)
+        material_id = request.args.get("material_id", type=int)
+        res = MaterialModel.get_all_materials(material_id)
+        return success_response("Material list : ", res.data)
     except Exception as e:
         return error_response(str(e))
-
 
 def get_materials_by_module(module_id):
     try:

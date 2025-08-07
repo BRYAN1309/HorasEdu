@@ -1,17 +1,41 @@
+import type React from 'react';
+import type {Quiz} from '../types/types';
 import api from './api';
 
-const viewQuizDetails = async (id: number) => {
+export const viewQuiz = async (quizId: number, setter: React.Dispatch<React.SetStateAction<Quiz | undefined>>) => {
 	try {
-		const res = await api.get(`/quizes?id=${id}`);
+		const res = await api.get(`/quiz/${quizId}`);
+		console.log(res.data.data);
+		setter(res.data.data);
 		return res.data;
 	} catch (err) {
 		throw err;
 	}
 };
 
-const viewQuizes = async () => {
+const viewQuizzes = async () => {
 	try {
 		const res = await api.get('/quizes');
+		return res.data;
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const updateQuiz = async (payload: Partial<Quiz>, quiz_id: number) => {
+	try {
+		const res = await api.patch(`/quiz?quiz_id=${quiz_id}`, payload);
+		console.log(res.data);
+		return res.data;
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const submitQuiz = async (score: number, quiz_id: number) => {
+	try {
+		const res = await api.post(`/quiz/submit/${quiz_id}`, {score: score});
+		console.log(res.data);
 		return res.data;
 	} catch (err) {
 		throw err;

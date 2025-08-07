@@ -169,7 +169,7 @@ export default function LandingPage() {
 								</button>
 							</div>
 
-							<div className="grid grid-cols-3 gap-8 pt-4">
+							{/* <div className="grid grid-cols-3 gap-8 pt-4">
 								<div className="text-center">
 									<div className="text-3xl font-bold text-green-600">889</div>
 									<div className="text-sm text-gray-600 font-medium">Total Siswa</div>
@@ -182,7 +182,7 @@ export default function LandingPage() {
 									<div className="text-3xl font-bold text-green-600">4.9</div>
 									<div className="text-sm text-gray-600 font-medium">Rating</div>
 								</div>
-							</div>
+							</div> */}
 						</div>
 
 						<div className="relative">
@@ -191,19 +191,19 @@ export default function LandingPage() {
 							</div>
 
 							{/* Floating Cards */}
-							<div className="absolute z-20 -top-4 -right-4 bg-white rounded-xl p-4 shadow-lg border border-gray-100">
+							{/* <div className="absolute z-20 -top-4 -right-4 bg-white rounded-xl p-4 shadow-lg border border-gray-100">
 								<div className="flex items-center space-x-3">
 									<div className="w-3 h-3 bg-green-500 rounded-full"></div>
 									<span className="text-sm font-medium text-gray-700">4 Kursus Aktif</span>
 								</div>
-							</div>
+							</div> */}
 
-							<div className="absolute z-20 -bottom-4 -left-4 bg-white rounded-xl p-4 shadow-lg border border-gray-100">
+							{/* <div className="absolute z-20 -bottom-4 -left-4 bg-white rounded-xl p-4 shadow-lg border border-gray-100">
 								<div className="flex items-center space-x-2">
 									<Star className="h-5 w-5 text-yellow-400 fill-current" />
 									<span className="text-sm font-medium text-gray-700">Rating 4.9/5</span>
 								</div>
-							</div>
+							</div> */}
 						</div>
 					</div>
 				</div>
@@ -401,7 +401,7 @@ export default function LandingPage() {
 			</section>
 
 			{/* Testimonials Section */}
-			<section className="py-20 bg-white">
+			{/* <section className="py-20 bg-white">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center mb-16">
 						<h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Apa Kata Siswa Kami</h2>
@@ -425,7 +425,7 @@ export default function LandingPage() {
 						))}
 					</div>
 				</div>
-			</section>
+			</section> */}
 
 			{/* CTA Section */}
 			<section className="py-20 bg-green-600">

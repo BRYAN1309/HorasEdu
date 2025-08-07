@@ -58,37 +58,44 @@ def submit_quiz(quiz_id):
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
             return error_response("Missing or invalid token")
+
+        token = auth_header.split(" ")[1]
+        token_data = UserModel.verify_token(token)
+        if not token_data:
+            return error_response("Invalid or expired token")
+
+        user_id = token_data["user_id"]
+
+        data = request.get_json()
+        score = data.get("score")
+
+        result = UserQuizModel.update_user_quiz(user_id, quiz_id, score)
+
+        return {
+            "message": "Quiz submitted successfully.",
+            "score": score,
+            "result": result.data 
+        }
+
+    except Exception as e:
+        return error_response(str(e))
+    
+def get_user_quiz(quiz_id):
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return error_response("Missing or invalid token")
         token = auth_header.split(" ")[1]
         token_data = UserModel.verify_token(token)
         if not token_data:
             return error_response("Invalid or expired token")
         user_id = token_data["user_id"]
+        
+        res = UserQuizModel.get_user_quiz(user_id, quiz_id)
 
-        # Get user's answers for this quiz
-        answers_res = UserQuizModel.get_user_answers(user_id, quiz_id)
-        answers = answers_res.data
-        if not answers:
-            return error_response("No answers submitted for this quiz")
-
-        total_questions = len(answers)
-        total_correct = sum(1 for a in answers if a["is_correct"])
-        score = round((total_correct / total_questions) * 100, 2)
-
-        # Save final result
-        UserQuizModel.save_user_quiz_result({
-            "user_id": user_id,
-            "quiz_id": quiz_id,
-            "score": score,
-            "total_correct": total_correct,
-            "total_questions": total_questions,
-            "submitted_at": datetime.utcnow().isoformat()
-        })
-
-        return success_response("Quiz submitted successfully", {
-            "score": score,
-            "total_correct": total_correct,
-            "total_questions": total_questions
-        })
-
+        if (not res.data):
+            res.data = None
+            
+        return success_response("Get user's quiz success", res.data)
     except Exception as e:
         return error_response(str(e))

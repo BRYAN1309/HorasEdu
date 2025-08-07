@@ -14,9 +14,17 @@ class CourseModel:
         return supabase.table("courses").select("*").eq("id", course_id).single().execute()
 
     @staticmethod
-    def get_course_modules_materials(course_id):
+    def get_course_modules_materials_quizzes(course_id):
         return supabase.table("courses") \
-            .select("*, modules(*, materials(*))") \
+            .select("*, modules(*, materials(*), quiz(*))") \
             .eq("id", course_id) \
             .single() \
             .execute()
+            
+    @staticmethod
+    def get_all_course_modules_materials():
+        return supabase.table("courses") \
+            .select("*, modules(*, materials(*))") \
+            .execute()
+            
+    

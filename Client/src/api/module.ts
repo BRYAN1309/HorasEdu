@@ -1,19 +1,24 @@
-import axios from "axios";
+import axios from 'axios';
+import type React from 'react';
+import type {Module} from '../types/types';
+import api from './api';
 
-const viewModuleDetails = async (id: number) => {
-    try {
-        const res = await axios.get(`/modules?id=${id}`);
-        return res.data;
-    } catch (err) {
-        throw err;
-    }
+export const viewModule = async (moduleId: number) => {
+	try {
+		const res = await api.get(`/modules/${moduleId}`);
+		console.log(res.data);
+		return res.data.data;
+	} catch (err) {
+		throw err;
+	}
 };
 
-const viewAllModules = async () => {
-    try {
-        const res = await axios.get(`/modules`);
-        return res.data;
-    } catch (err) {
-        throw err;
-    }
+export const viewAllModules = async (setter: React.Dispatch<React.SetStateAction<Module[]>>) => {
+	try {
+		const res = await axios.get(`/modules/view`);
+		setter(res.data.data);
+		return res.data;
+	} catch (err) {
+		throw err;
+	}
 };

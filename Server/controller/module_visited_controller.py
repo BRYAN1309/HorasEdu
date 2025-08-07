@@ -1,9 +1,9 @@
 from flask import request
 from view.response_view import success_response, error_response
 from model.user_model import UserModel
-from model.material_visited_model import MaterialVisitedModel
+from model.module_visited_model import ModuleVisitedModel
 
-def create_material_visited():
+def create_module_visited():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         return error_response("Missing or invalid token")
@@ -17,24 +17,24 @@ def create_material_visited():
     data = request.json
 
     # Validation
-    materials_id = data.get("materials_id")
-    if not materials_id:
+    module_ids = data.get("module_ids")
+    if not module_ids:
         return error_response("module_id is required")
 
 
     # Inject user_id
     payload = {
         "user_id": user_id,
-        "materials_id": materials_id
+        "modules_id": module_ids
     }
 
     try:
-        res = MaterialVisitedModel.create_material_visited(payload)
-        return success_response("material visited recorded", res.data)
+        res = ModuleVisitedModel.create_module_visited(payload)
+        return success_response("module visited recorded", res.data)
     except Exception as e:
         return error_response(str(e))
     
-def get_materials_visited():
+def get_modules_visited():
     try:
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
@@ -47,9 +47,9 @@ def get_materials_visited():
         
         user_id = token_data["user_id"]
         
-        material_ids = request.args.getlist('material_ids', type=int)
-        res = MaterialVisitedModel.get_all_materials_visited(material_ids=material_ids, user_id=user_id)
-        return success_response("Material Visited", res.data)
+        module_ids = request.args.getlist('module_ids', type=int)
+        res = ModuleVisitedModel.get_all_module_visited(modules_id=module_ids, user_id=user_id)
+        return success_response("Module Visited", res.data)
     except Exception as e:
         return error_response(str(e))
 
