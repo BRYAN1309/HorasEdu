@@ -9,9 +9,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) =
 	const [sidebarItems, setSidebarItems] = useState<ISidebarItems[]>([
 		{icon: Home, label: 'Dashboard', active: false},
 		{icon: Book, label: 'Courses', active: false},
-		{icon: Award, label: 'Achievements', active: false},
 		{icon: Settings, label: 'Settings', active: false},
-		{icon: HelpCircle, label: 'Support', active: false},
 	]);
 
 	return (

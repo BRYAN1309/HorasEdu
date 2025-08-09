@@ -14,7 +14,9 @@ from controller import (
     quiz_controller,
     question_controller,
     user_course_controller,
-    module_visited_controller
+    module_visited_controller,
+    final_exam_controller,
+    user_final_exam_controller
 )
 from controller import user_quiz_controller
 from controller import quiz_visited_controller
@@ -85,6 +87,12 @@ app.route("/material/view/visited", methods=["GET"])(material_visited_controller
 # Module visited
 app.route("/module/visited", methods=["POST"])(module_visited_controller.create_module_visited)
 app.route("/module/view/visited", methods=["GET"])(module_visited_controller.get_modules_visited)
+
+# Final Exam
+# app.route("/final_exam/submit/<int:final_exam_id>", methods=["POST"])()
+app.route("/final_exam/view/<int:course_id>", methods=["GET"])(final_exam_controller.get_final_exam)
+app.route("/final_exam/submit/<int:final_exam_id>", methods=["POST"])(user_final_exam_controller.submit_final_exam)
+app.route("/final_exam/user/<int:final_exam_id>", methods=["GET"])(user_final_exam_controller.get_user_final_exam)
 
 if __name__ == "__main__":
     app.run(debug=True)

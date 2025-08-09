@@ -15,11 +15,13 @@ import {
 	Target,
 	Trophy,
 } from 'lucide-react';
-import type {Module, Course, Material, CourseDetails, IMaterialsVisited, IModuleVisited} from '../types/types';
-import {Link, useLocation, useParams} from 'react-router-dom';
+import type {Module, Course, Material, CourseDetails, IMaterialsVisited, IModuleVisited, FinalExam, IUserFinalExam} from '../types/types';
+import {Link, useAsyncError, useLocation, useParams} from 'react-router-dom';
 import {viewCourseDetails} from '../api/courses';
 import {viewMaterialsVisited} from '../api/materialVisited';
 import {viewModulesVisited} from '../api/moduleVisited';
+import {viewFinalExam, viewUserFinalExam} from '../api/finalExam';
+import {useAlert} from '../components/Alert';
 
 const CourseDetailsPage: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<'overview' | 'modules' | 'progress'>('overview');
@@ -27,23 +29,44 @@ const CourseDetailsPage: React.FC = () => {
 	const [materialVisited, setMaterialVisited] = useState<IMaterialsVisited[]>([]);
 	const [moduleVisited, setModuleVisited] = useState<IModuleVisited[]>([]);
 	const [modules, setModules] = useState<Module[]>([]);
+	const [finalExam, setFinalExam] = useState<FinalExam>();
+	const [userFinalExam, setUserFinalExam] = useState<IUserFinalExam>();
+	const {showError, showSuccess} = useAlert();
 
 	const location = useLocation();
 	const {id_course} = useParams();
 
 	useEffect(() => {
+		if (!id_course) return;
+
 		const viewAll = async () => {
 			try {
 				const res = await viewCourseDetails(Number(id_course));
 				setCourses(res.data);
+				await viewFinalExam(setFinalExam, Number(id_course));
 			} catch (err) {
-				alert(`Error : ${err}`);
+				showError('Error getting data.');
 				console.log('Error : ', err);
 			}
 		};
 
 		viewAll();
 	}, []);
+
+	useEffect(() => {
+		if (!finalExam) return;
+
+		const getUserFinalExam = async () => {
+			try {
+				await viewUserFinalExam(setUserFinalExam, finalExam.id);
+			} catch (err) {
+				showError('Error getting data');
+				console.log('Error getting data : ', err);
+			}
+		};
+
+		getUserFinalExam();
+	}, [finalExam]);
 
 	useEffect(() => {
 		const getMaterialVisited = async () => {
@@ -433,6 +456,18 @@ const CourseDetailsPage: React.FC = () => {
 													<li>• Covers content from all {orderedModules.length} modules</li>
 												</ul>
 
+												{/* Score Section */}
+												{userFinalExam && (
+													<div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+														<div className="flex items-center space-x-2 text-blue-700 text-sm">
+															<CheckCircle className="w-4 h-4" />
+															<span>
+																Your latest score: <strong>{userFinalExam.score}%</strong>
+															</span>
+														</div>
+													</div>
+												)}
+
 												{areAllModulesCompleted() && (
 													<div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
 														<div className="flex items-center space-x-2 text-green-700 text-sm">
@@ -456,20 +491,25 @@ const CourseDetailsPage: React.FC = () => {
 											</div>
 
 											<div className="mt-6 flex space-x-3">
-												<button
-													className={`px-6 py-3 rounded-lg font-medium text-sm transition-colors ${
-														areAllModulesCompleted()
-															? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md'
-															: 'bg-gray-300 text-gray-500 cursor-not-allowed'
-													}`}
-													disabled={!areAllModulesCompleted()}
-												>
-													{areAllModulesCompleted() ? 'Start Final Exam' : 'Final Exam Locked'}
-												</button>
-												{areAllModulesCompleted() && (
-													<button className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
-														View Exam Guidelines
-													</button>
+												{finalExam && (
+													<>
+														<Link
+															to={areAllModulesCompleted() ? `${location.pathname}/final_exam/${finalExam.id}` : '#'}
+															className={`px-6 py-3 rounded-lg font-medium text-sm transition-colors ${
+																areAllModulesCompleted()
+																	? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md'
+																	: 'bg-gray-300 text-gray-500 pointer-events-none'
+															}`}
+														>
+															{areAllModulesCompleted() ? (userFinalExam ? 'Retake Final Exam' : 'Start Final Exam') : 'Final Exam Locked'}
+														</Link>
+
+														{areAllModulesCompleted() && (
+															<button className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+																View Exam Guidelines
+															</button>
+														)}
+													</>
 												)}
 											</div>
 										</div>
@@ -578,7 +618,7 @@ const CourseDetailsPage: React.FC = () => {
 								<div className="flex items-center justify-between">
 									<span className="text-gray-600">Final Exam</span>
 									<span className={`font-medium ${areAllModulesCompleted() ? 'text-purple-600' : 'text-gray-400'}`}>
-										{areAllModulesCompleted() ? 'Available' : 'Locked'}
+										{finalExam ? 'Completed' : areAllModulesCompleted() ? 'Available' : 'Locked'}
 									</span>
 								</div>
 							</div>
