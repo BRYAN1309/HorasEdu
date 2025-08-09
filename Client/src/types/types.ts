@@ -50,7 +50,6 @@ export interface FinalExam {
 	course_id: number;
 	created_at: string;
 	score?: number;
-	lock: boolean;
 	duration: number;
 	pass_score: number;
 	description: string;

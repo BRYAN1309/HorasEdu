@@ -12,6 +12,7 @@ import LandingPage from '../pages/LandingPage';
 import ProfilePage from '../pages/Profile';
 import ModulePage from '../pages/Module';
 import MaterialPage from '../pages/Material';
+import FinalExamPage from '../pages/FinalExam';
 
 const router = createBrowserRouter([
 	{
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
 							{
 								path: '/courses/:id_course/module/:id_module/quiz/:id_quiz',
 								element: <QuizPage />,
+							},
+							{
+								path: '/courses/:id_course/final_exam/:id_final_exam',
+								element: <FinalExamPage />,
 							},
 							{
 								path: '/profile/:user_id',

@@ -18,4 +18,11 @@ const viewUserProgress = async (id: string) => {
 	}
 };
 
-
+const register = async (payload: any) => {
+	try {
+		const res = await api.post(`/user/register`, payload);
+		console.log(res.data);
+	} catch (err) {
+		throw err;
+	}
+};

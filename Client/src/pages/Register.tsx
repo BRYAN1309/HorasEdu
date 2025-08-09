@@ -1,16 +1,19 @@
 import React, {useState} from 'react';
 import {Eye, EyeOff, User, Mail, Lock, BookOpen} from 'lucide-react';
 import {Link} from 'react-router-dom';
+import {useAlert} from '../components/Alert';
+import {register} from '../api/auth';
 
 export default function RegisterPage() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [formData, setFormData] = useState({
-		fullName: '',
+		name: '',
 		email: '',
 		password: '',
 		confirmPassword: '',
 	});
+	const {showSuccess, showError} = useAlert();
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({
@@ -19,7 +22,16 @@ export default function RegisterPage() {
 		});
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
+		if (!formData) return;
+
+		try {
+			const {confirmPassword, ...payload} = formData;
+			await register(payload);
+			showSuccess('Register success.');
+		} catch (err) {
+			showError('Register error.');
+		}
 		console.log('Register form submitted:', formData);
 	};
 
@@ -57,7 +69,7 @@ export default function RegisterPage() {
 									required
 									className="block w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
 									placeholder="Masukkan nama lengkap"
-									value={formData.fullName}
+									value={formData.name}
 									onChange={handleInputChange}
 								/>
 							</div>
@@ -154,7 +166,7 @@ export default function RegisterPage() {
 						{/* Register Button */}
 						<button
 							type="button"
-							onClick={handleSubmit}
+							onClick={async () => await handleSubmit()}
 							className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-200"
 						>
 							Daftar Sekarang
