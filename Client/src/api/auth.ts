@@ -1,21 +1,22 @@
-import type { LoginPayload, RegisterPayload } from "../types/types";
-import api from "./api";
+import type {LoginPayload, RegisterPayload} from '../types/types';
+import api from './api';
 
 export const login = async (loginPayload: LoginPayload) => {
-    try {
-        const res = await api.post("/user/login", loginPayload);
-        const data = res.data.data;
-        localStorage.setItem("token", data.token);
-    } catch (err) {
-        throw err;
-    }
+	try {
+		const res = await api.post('/user/login', loginPayload);
+		const data = res.data.data;
+		localStorage.setItem('token', data.token);
+		localStorage.setItem('user', JSON.stringify(data.user));
+	} catch (err) {
+		throw err;
+	}
 };
 
 export const register = async (registerPayload: RegisterPayload) => {
-    try {
-        const res = await api.post("/user/register", registerPayload);
-        return res.data;
-    } catch (err) {
-        throw err;
-    }
+	try {
+		const res = await api.post('/user/register', registerPayload);
+		return res.data;
+	} catch (err) {
+		throw err;
+	}
 };

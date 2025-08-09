@@ -89,11 +89,7 @@ const MaterialPage = () => {
 		setIsPlaying(!isPlaying);
 	};
 
-	const renderArticleContent = () => (
-		<div className="prose max-w-none">
-			<p className="text-gray-800 leading-relaxed">{renderFormattedText(material?.content || '')}</p>
-		</div>
-	);
+	const renderArticleContent = () => <div dangerouslySetInnerHTML={{__html: material?.content || ''}} />;
 
 	const renderVideoContent = () => {
 		// Function to extract video ID from YouTube URL
@@ -235,7 +231,7 @@ const MaterialPage = () => {
 					<img src={material?.image_url} alt={''} className="w-full h-auto" />
 					<div className="p-6">
 						<h3 className="font-semibold text-gray-900 mb-2 text-xl">Konten</h3>
-						<p className="text-gray-600">{renderFormattedText(material?.content || '')}</p>
+						<div dangerouslySetInnerHTML={{__html: material?.content || ''}} />;{/* {renderFormattedText(material?.content || '')} */}
 					</div>
 				</div>
 			</div>
@@ -310,7 +306,7 @@ const MaterialPage = () => {
 
 				{/* Material Content */}
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-					{material?.type === 'article' && renderArticleContent()}
+					{material?.type === 'article' && renderImageContent()}
 					{material?.type === 'video' && renderVideoContent()}
 					{material?.type === 'image' && renderImageContent()}
 				</div>

@@ -190,3 +190,8 @@ export interface IMessage {
 	content: Promise<string> | string;
 	timestamp: Date;
 }
+
+export interface IUser {
+	email: string;
+	name: string;
+}

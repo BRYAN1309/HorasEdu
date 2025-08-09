@@ -15,6 +15,7 @@ def get_modules_by_course(course_id):
         res = ModuleModel.get_modules_by_course(course_id)
         return success_response("Modules retrieved", res.data)
     except Exception as e:
+        print("Error : ", str(e))
         return error_response(str(e))
 
 def get_modules_materials(module_id):

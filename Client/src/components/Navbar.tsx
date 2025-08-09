@@ -8,7 +8,7 @@ const Navbar = () => {
 	const {setSidebarOpen} = useAppContext();
 	const location = useLocation();
 	const [page, setPage] = useState<string>('');
-	const pages: string[] = ['profile', 'dashboard'];
+	const pages: string[] = ['profile', 'dashboard', 'courses'];
 
 	useEffect(() => {
 		const currentPage = pages.find((page) => location.pathname.toLowerCase().includes(page));
@@ -29,10 +29,10 @@ const Navbar = () => {
 				</div>
 
 				<div className="flex items-center space-x-4">
-					<button className="p-2 hover:bg-gray-100 rounded-full transition-colors relative">
+					{/* <button className="p-2 hover:bg-gray-100 rounded-full transition-colors relative">
 						<Bell size={20} className="text-gray-600" />
 						<span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-					</button>
+					</button> */}
 					<button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
 						<User size={20} className="text-gray-600" />
 					</button>

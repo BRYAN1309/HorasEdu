@@ -5,16 +5,23 @@ export const Capitalize = (sentence: string) => {
 };
 
 export function renderFormattedText(text: string) {
-	// Split on line breaks first
 	return text.split('\n').map((line, lineIndex) => {
-		// Inside each line, split into bold/non-bold parts
-		const parts = line.split(/(\*\*.*?\*\*)/g);
+		// Detect heading level based on pattern (Markdown style)
+		let headingMatch = line.match(/^(#{1,3})\s+(.*)$/);
+		let Tag: string = 'p';
+		let content = line;
 
-		return (
-			<React.Fragment key={lineIndex}>
-				{parts.map((part, i) => (part.startsWith('**') && part.endsWith('**') ? <strong key={i}>{part.slice(2, -2)}</strong> : part))}
-				<br />
-			</React.Fragment>
-		);
+		if (headingMatch) {
+			const hashes = headingMatch[1].length;
+			Tag = `h${hashes}`;
+			content = headingMatch[2];
+		}
+
+		// Split into bold/non-bold parts
+		const parts = content
+			.split(/(\*\*.*?\*\*)/g)
+			.map((part, i) => (part.startsWith('**') && part.endsWith('**') ? React.createElement('strong', {key: i}, part.slice(2, -2)) : part));
+
+		return React.createElement(React.Fragment, {key: lineIndex}, React.createElement(Tag, null, parts), React.createElement('br'));
 	});
 }

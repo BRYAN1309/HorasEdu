@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
-import {User, Mail, Calendar, Lock, Eye, EyeOff, Book, Trophy, Clock, CheckCircle} from 'lucide-react';
+import React, {useEffect, useState} from 'react';
+import {User, Mail, Calendar, Lock, Eye, EyeOff, Book, Trophy, Clock, CheckCircle, ShowerHead} from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import type {IUser} from '../types/types';
+import {useAlert} from '../components/Alert';
 
 interface Course {
 	id: string;
@@ -29,6 +31,8 @@ const ProfilePage: React.FC = () => {
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [activeTab, setActiveTab] = useState('profile');
+	const [user, setUser] = useState<IUser>();
+	const {showError} = useAlert();
 
 	const [passwordForm, setPasswordForm] = useState({
 		currentPassword: '',
@@ -36,14 +40,32 @@ const ProfilePage: React.FC = () => {
 		confirmPassword: '',
 	});
 
-	// Mock user data
-	const user: UserProfile = {
-		id: '1',
-		name: 'Aksara Batak',
-		email: 'aksara@batak.com',
-		created_at: '2024-01-15T10:30:00Z',
-		updated_at: '2024-07-20T14:45:00Z',
-	};
+	useEffect(() => {
+		const user: any = JSON.parse(localStorage.getItem('user') || '');
+		const name = user.name;
+		const email = user.email;
+
+		setUser({
+			name: name,
+			email: email,
+		});
+
+		const viewPage = async () => {
+			try {
+			} catch (err) {
+				showError('Error menampilkan data');
+			}
+		};
+	}, []);
+
+	// // Mock user? data
+	// const user?: UserProfile = {
+	// 	id: '1',
+	// 	name: 'Aksara Batak',
+	// 	email: 'aksara@batak.com',
+	// 	created_at: '2024-01-15T10:30:00Z',
+	// 	updated_at: '2024-07-20T14:45:00Z',
+	// };
 
 	// Mock courses data
 	const courses: Course[] = [
@@ -155,11 +177,9 @@ const ProfilePage: React.FC = () => {
 									<div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
 										<User className="w-10 h-10 text-blue-600" />
 									</div>
-									<h2 className="text-xl font-semibold text-gray-900 mb-1">{user.name}</h2>
-									<p className="text-gray-600 mb-4">{user.email}</p>
-									<div className="text-sm text-gray-500">
-										<p>Bergabung sejak {formatDate(user.created_at)}</p>
-									</div>
+									<h2 className="text-xl font-semibold text-gray-900 mb-1">{user?.name}</h2>
+									<p className="text-gray-600 mb-4">{user?.email}</p>
+									<div className="text-sm text-gray-500"></div>
 								</div>
 
 								<nav className="mt-8">
@@ -172,7 +192,7 @@ const ProfilePage: React.FC = () => {
 										<User className="w-4 h-4 mr-3" />
 										Informasi Profil
 									</button>
-									<button
+									{/* <button
 										onClick={() => setActiveTab('courses')}
 										className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md mb-2 ${
 											activeTab === 'courses' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
@@ -180,8 +200,8 @@ const ProfilePage: React.FC = () => {
 									>
 										<Book className="w-4 h-4 mr-3" />
 										Progress Kursus
-									</button>
-									<button
+									</button> */}
+									{/* <button
 										onClick={() => setActiveTab('password')}
 										className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
 											activeTab === 'password' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
@@ -189,7 +209,7 @@ const ProfilePage: React.FC = () => {
 									>
 										<Lock className="w-4 h-4 mr-3" />
 										Ubah Password
-									</button>
+									</button> */}
 								</nav>
 							</div>
 						</div>
@@ -209,28 +229,26 @@ const ProfilePage: React.FC = () => {
 													<User className="w-4 h-4 mr-2" />
 													Nama Lengkap
 												</dt>
-												<dd className="mt-1 text-sm text-gray-900">{user.name}</dd>
+												<dd className="mt-1 text-sm text-gray-900">{user?.name}</dd>
 											</div>
 											<div>
 												<dt className="text-sm font-medium text-gray-500 flex items-center">
 													<Mail className="w-4 h-4 mr-2" />
 													Email
 												</dt>
-												<dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
+												<dd className="mt-1 text-sm text-gray-900">{user?.email}</dd>
 											</div>
-											<div>
+											{/* <div>
 												<dt className="text-sm font-medium text-gray-500 flex items-center">
 													<Calendar className="w-4 h-4 mr-2" />
 													Tanggal Bergabung
 												</dt>
-												<dd className="mt-1 text-sm text-gray-900">{formatDate(user.created_at)}</dd>
-											</div>
+											</div> */}
 											<div>
-												<dt className="text-sm font-medium text-gray-500 flex items-center">
+												{/* <dt className="text-sm font-medium text-gray-500 flex items-center">
 													<Calendar className="w-4 h-4 mr-2" />
 													Terakhir Diperbarui
-												</dt>
-												<dd className="mt-1 text-sm text-gray-900">{formatDate(user.updated_at)}</dd>
+												</dt> */}
 											</div>
 										</dl>
 									</div>
@@ -338,7 +356,7 @@ const ProfilePage: React.FC = () => {
 								</div>
 							)}
 
-							{activeTab === 'password' && (
+							{/* {activeTab === 'password' && (
 								<div className="bg-white rounded-lg shadow-sm">
 									<div className="p-6 border-b border-gray-200">
 										<h3 className="text-lg font-medium text-gray-900">Ubah Password</h3>
@@ -427,7 +445,7 @@ const ProfilePage: React.FC = () => {
 										</div>
 									</div>
 								</div>
-							)}
+							)} */}
 						</div>
 					</div>
 				</div>

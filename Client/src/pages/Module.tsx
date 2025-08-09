@@ -1,8 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {ArrowLeft, BookOpen, Play, Image, CheckCircle, Clock, FileText, Award, ChevronRight, PlayCircle, Lock} from 'lucide-react';
+import {
+	ArrowLeft,
+	BookOpen,
+	Play,
+	Image,
+	CheckCircle,
+	Clock,
+	FileText,
+	Award,
+	ChevronRight,
+	PlayCircle,
+	Lock,
+	ChevronLeft,
+} from 'lucide-react';
 import type {IMaterialsVisited, IUserQuiz, Module} from '../types/types';
 import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
-import {viewModule} from '../api/module';
+import {viewAllModulesByCourse, viewModule} from '../api/module';
 import {viewMaterialsVisited} from '../api/materialVisited';
 import {viewUserQuiz} from '../api/userQuiz';
 
@@ -11,9 +24,11 @@ const ModulePage = () => {
 	const [module, setModule] = useState<Module>();
 	const [materialVisited, setMaterialVisited] = useState<IMaterialsVisited[]>([]);
 	const [userQuiz, setUserQuiz] = useState<IUserQuiz>();
-	const {id_module} = useParams();
+	const {id_module, id_course} = useParams();
 	const [isQuizLocked, setIsQuizLocked] = useState<boolean>(true);
 	const location = useLocation();
+	const [modules, setModules] = useState<Module[]>([]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!id_module) {
@@ -27,6 +42,7 @@ const ModulePage = () => {
 					...res,
 					quiz: Array.isArray(res.quiz) ? res.quiz[0] : res.quiz,
 				});
+				await viewAllModulesByCourse(setModules, Number(id_course));
 			} catch (err) {
 				alert(`Error : ${err}`);
 				console.log('Error view moduel : ', err);
@@ -35,7 +51,7 @@ const ModulePage = () => {
 
 		viewAll();
 		console.log('IM here');
-	}, [id_module]);
+	}, [id_module, id_course]);
 
 	useEffect(() => {
 		console.log('USER QUIZ : ', userQuiz);
@@ -86,10 +102,10 @@ const ModulePage = () => {
 		console.log('Module material ids : ', moduleMaterialIds);
 
 		const totalVisited = moduleMaterialIds?.filter((id) => materialVisitedIds.includes(id)).length || 0;
-		const progressPercentage = moduleMaterialIds?.length ? (totalVisited / moduleMaterialIds?.length) * 100 : 0;
+		const progressPercentage = (moduleMaterialIds?.length ? (totalVisited / moduleMaterialIds?.length) * 100 : 0).toFixed(2);
 		console.log('PROGRESS PERCENTAGE : ', progressPercentage);
 
-		return progressPercentage;
+		return Number(progressPercentage);
 	};
 
 	const getIcon = (type: string) => {
@@ -104,6 +120,10 @@ const ModulePage = () => {
 				return <BookOpen className="w-5 h-5" />;
 		}
 	};
+
+	useEffect(() => {
+		console.log('Modules', modules);
+	}, [modules]);
 
 	const getTypeColor = (type: string) => {
 		switch (type) {
@@ -134,6 +154,16 @@ const ModulePage = () => {
 
 	if (!filteredModule) return null;
 
+	const currentIndex = modules.findIndex((module) => module.id === Number(id_module));
+
+	const navigateModule = (next: boolean) => {
+		if (!(modules.length > 0)) return;
+
+		const id = next ? modules[currentIndex + 1].id : modules[currentIndex - 1].id;
+		console.log('ID : ', id);
+		navigate(`${location.pathname.split('/').slice(0, -1).join('/')}/${id}`);
+	};
+
 	console.log('Filtered Module : ', filteredModule);
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -161,7 +191,7 @@ const ModulePage = () => {
 							<div className="flex items-center gap-4 text-sm text-gray-500">
 								<div className="flex items-center gap-1">
 									<Clock className="w-4 h-4" />
-									<span>{filteredModule?.duration}</span>
+									<span>{filteredModule?.duration} menit</span>
 								</div>
 								<div className="flex items-center gap-1">
 									<BookOpen className="w-4 h-4" />
@@ -197,7 +227,7 @@ const ModulePage = () => {
 											<p className="text-sm text-gray-600 mt-1">{material.description}</p>
 											<div className="flex items-center gap-2 mt-2">
 												<Clock className="w-4 h-4 text-gray-400" />
-												<span className="text-sm text-gray-500">{material.duration}</span>
+												<span className="text-sm text-gray-500">{material.duration} menit</span>
 											</div>
 										</div>
 
@@ -274,8 +304,33 @@ const ModulePage = () => {
 
 				{/* Action Buttons */}
 				<div className="flex justify-between items-center mt-8">
-					<button className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">Previous Module</button>
-					<button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">Next Module</button>
+					{modules[currentIndex - 1] ? (
+						<button
+							className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors hover:cursor-pointer"
+							onClick={() => {
+								navigateModule(false);
+							}}
+						>
+							<ChevronLeft className="w-5 h-5" />
+							<span>Previous Module</span>
+						</button>
+					) : (
+						<div className="w-[160px]"></div>
+					)}
+
+					{modules[currentIndex + 1] ? (
+						<button
+							className="flex items-center gap-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors hover:cursor-pointer"
+							onClick={() => {
+								navigateModule(true);
+							}}
+						>
+							<span>Next Module</span>
+							<ChevronRight className="w-5 h-5" />
+						</button>
+					) : (
+						<div className="w-[160px]"></div>
+					)}
 				</div>
 			</div>
 		</div>

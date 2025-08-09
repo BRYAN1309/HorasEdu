@@ -21,3 +21,13 @@ export const viewAllModules = async (setter: React.Dispatch<React.SetStateAction
 		throw err;
 	}
 };
+
+export const viewAllModulesByCourse = async (setter: React.Dispatch<React.SetStateAction<Module[]>>, courseId: number) => {
+	try {
+		const res = await api.get(`/modules/course/${courseId}`);
+		setter(res.data.data);
+		return res.data;
+	} catch (err) {
+		throw err;
+	}
+};

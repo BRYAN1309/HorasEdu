@@ -28,3 +28,12 @@ export const viewAllCourse = async (setter: React.Dispatch<React.SetStateAction<
 		throw err;
 	}
 };
+
+export const updateCourse = async (data: {[key: string]: any}, course_id: number) => {
+	try {
+		const res = await api.patch(`/courses/update/${course_id}`, data);
+		console.log(res.data);
+	} catch (err) {
+		throw err;
+	}
+};

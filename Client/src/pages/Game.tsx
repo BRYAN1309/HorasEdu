@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Home, Book, Settings, Trophy, Star, Clock, Target, Zap, Heart, RotateCcw, Volume2, CheckCircle} from 'lucide-react';
+import Sidebar from '../components/Sidebar';
 
 const BatakGames = () => {
 	const [currentGame, setCurrentGame] = useState('menu');
@@ -191,9 +192,9 @@ const BatakGames = () => {
 	};
 
 	const GameMenu = () => (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-gray-50 flex">
 			{/* Sidebar */}
-			<div className="fixed left-0 top-0 h-full w-48 bg-white shadow-lg border-r">
+			{/* <div className="fixed left-0 top-0 h-full w-48 bg-white shadow-lg border-r">
 				<div className="p-6">
 					<h2 className="text-xl font-bold text-gray-800">Aksara Batak</h2>
 				</div>
@@ -211,10 +212,11 @@ const BatakGames = () => {
 						<span>Settings</span>
 					</div>
 				</nav>
-			</div>
+			</div> */}
+			<Sidebar />
 
 			{/* Main Content */}
-			<div className="ml-48 p-8">
+			<div className="p-8 w-full">
 				<div className="mb-8">
 					<h1 className="text-3xl font-bold text-gray-800">Interactive Games</h1>
 					<p className="text-gray-600 mt-2">Belajar Aksara Batak dengan cara yang menyenangkan!</p>
@@ -707,40 +709,46 @@ const BatakGames = () => {
 
 				{/* Result Modal */}
 				{showResult && (
-					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-						<div className="bg-white rounded-lg p-8 max-w-md mx-4">
+					<div
+						className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4"
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="result-title"
+						aria-describedby="result-desc"
+					>
+						<div className="bg-white rounded-lg shadow-md p-6 max-w-md w-full">
 							<div className="text-center">
-								<Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-								<h2 className="text-2xl font-bold text-gray-800 mb-4">
+								<Trophy className="mx-auto mb-4 w-16 h-16 text-yellow-400" aria-hidden="true" />
+								<h2 id="result-title" className="text-2xl font-semibold text-gray-900 mb-4">
 									{completedMatches.length === matchingPairs.length * 2 ? 'Selamat!' : 'Game Over!'}
 								</h2>
-								<div className="space-y-2 mb-6">
+								<div id="result-desc" className="text-gray-700 mb-6 space-y-2">
 									<p>
-										Final Score: <span className="font-bold text-blue-600">{score}</span>
+										Final Score: <span className="font-semibold text-blue-600">{score}</span>
 									</p>
 									<p>
 										Matches:{' '}
-										<span className="font-bold text-green-600">
+										<span className="font-semibold text-green-600">
 											{completedMatches.length / 2}/{matchingPairs.length}
 										</span>
 									</p>
 									<p>
-										Lives Left: <span className="font-bold text-red-600">{lives}</span>
+										Lives Left: <span className="font-semibold text-red-600">{lives}</span>
 									</p>
 								</div>
-								<div className="flex space-x-4">
+								<div className="flex gap-4">
 									<button
 										onClick={() => {
 											resetGame();
 											initMatchingGame();
 										}}
-										className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+										className="flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
 									>
 										Main Lagi
 									</button>
 									<button
 										onClick={() => setCurrentGame('menu')}
-										className="flex-1 bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700"
+										className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
 									>
 										Menu
 									</button>

@@ -18,6 +18,13 @@ def create_course():
     except Exception as e:
         return error_response(str(e))
 
+def update_course(course_id):
+    try:
+        data = request.json
+        res = CourseModel.create_course(data, course_id)
+        return success_response("Course updated", res.data)
+    except Exception as e:
+        return error_response(str(e))
 
 def get_courses():
     try:

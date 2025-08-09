@@ -19,6 +19,7 @@ import {Link, useParams} from 'react-router-dom';
 import {submitFinalExam, viewFinalExam} from '../api/finalExam';
 import type {OptionKey, FinalExam} from '../types/types';
 import {useAlert} from '../components/Alert';
+import {updateCourse} from '../api/courses';
 
 const FinalExamPage = () => {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -120,6 +121,7 @@ const FinalExamPage = () => {
 			debugLog('📤 Submitting final exam...');
 			const score = calculateScore();
 			const res = await submitFinalExam(score, finalExam!.id);
+			await updateCourse({status: 'selesai'}, Number(id_course));
 			debugLog('✅ Submit successful', {score, response: res});
 		} catch (err) {
 			debugLog('❌ Submit failed', err);

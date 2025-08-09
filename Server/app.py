@@ -46,6 +46,7 @@ app.route("/user/login", methods=["POST"])(user_controller.login)
 
 app.route("/courses", methods=["POST"])(course_controller.create_course)
 app.route("/courses", methods=["GET"])(course_controller.get_courses)
+app.route("/courses/update/<int:course_id>", methods=["PATCH"])(course_controller.update_course)
 app.route("/courses/<int:course_id>", methods=["GET"])(course_controller.get_course_by_id)  # ✅ NEW ROUTE
 app.route("/courses/<int:course_id>/all", methods=["GET"])(course_controller.get_course_modules_materials)
 app.route("/courses/all", methods=["GET"])(course_controller.get_all_course_modules_materials)

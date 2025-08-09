@@ -315,6 +315,8 @@ const QuizPage = () => {
 			<div className="max-w-4xl mx-auto px-6 py-8">
 				{/* Question */}
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
+					<img src={question.url_image} alt="" className="w-full min-h-64 max-h-72 object-cover mb-4 rounded-md object-center" />
+
 					<h2 className="text-2xl font-semibold text-gray-900 mb-6">{question.questions_text}</h2>
 
 					<div className="space-y-3">
@@ -347,7 +349,7 @@ const QuizPage = () => {
 				</div>
 
 				{/* Navigation */}
-				<div className="flex justify-between items-center">
+				{/* <div className="flex justify-between items-center">
 					<button
 						onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
 						disabled={currentQuestion === 0}
@@ -399,6 +401,94 @@ const QuizPage = () => {
 							<ChevronRight className="w-5 h-5" />
 						</button>
 					)}
+				</div> */}
+				{/* Responsive Quiz Navigation */}
+				<div className="space-y-4">
+					{/* Progress Section */}
+					<div className="flex items-center justify-between text-sm">
+						<span className="text-gray-600 font-medium">
+							Question {currentQuestion + 1} of {quiz.questions.length}
+						</span>
+						<span className="text-green-600 font-medium">{Object.keys(selectedAnswers).length} answered</span>
+					</div>
+
+					{/* Progress Bar */}
+					<div className="w-full bg-gray-200 rounded-full h-2">
+						<div
+							className="bg-green-600 h-2 rounded-full transition-all duration-300"
+							style={{width: `${(Object.keys(selectedAnswers).length / quiz.questions.length) * 100}%`}}
+						/>
+					</div>
+
+					{/* Navigation Controls */}
+					<div className="flex items-center justify-between gap-2 sm:gap-4">
+						{/* Previous Button */}
+						<button
+							onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+							disabled={currentQuestion === 0}
+							className={`flex items-center gap-2 px-3 sm:px-6 py-2 rounded-lg transition-colors flex-shrink-0 ${
+								currentQuestion === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+							}`}
+						>
+							<ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+							<span className="hidden sm:inline text-sm font-medium">Previous</span>
+						</button>
+
+						{/* Question Numbers - Scrollable */}
+						<div className="flex-1 max-w-xs sm:max-w-md lg:max-w-lg mx-2 sm:mx-4">
+							<div className="relative">
+								<div className="flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide pb-1 px-1">
+									{quiz.questions.map((_, index) => (
+										<button
+											key={index}
+											onClick={() => setCurrentQuestion(index)}
+											className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
+												index === currentQuestion
+													? 'bg-green-600 text-white shadow-lg scale-110'
+													: selectedAnswers[quiz.questions[index].id] !== undefined
+													? 'bg-green-100 text-green-700 border border-green-200'
+													: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+											}`}
+										>
+											{index + 1}
+										</button>
+									))}
+								</div>
+
+								{/* Scroll Fade Indicators - Only show if many questions */}
+								{quiz.questions.length > 6 && (
+									<>
+										<div className="absolute inset-y-0 left-0 w-3 sm:w-4 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+										<div className="absolute inset-y-0 right-0 w-3 sm:w-4 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+									</>
+								)}
+							</div>
+						</div>
+
+						{/* Next/Submit Button */}
+						{currentQuestion === quiz.questions.length - 1 ? (
+							<button
+								onClick={async () => await handleSubmitQuiz()}
+								disabled={Object.keys(selectedAnswers).length !== quiz.questions.length}
+								className={`flex items-center gap-2 px-3 sm:px-6 py-2 rounded-lg transition-colors flex-shrink-0 ${
+									Object.keys(selectedAnswers).length !== quiz.questions.length
+										? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+										: 'bg-green-600 text-white hover:bg-green-700 shadow-lg'
+								}`}
+							>
+								<span className="text-sm font-medium">Submit</span>
+								<Award className="w-4 h-4 sm:w-5 sm:h-5" />
+							</button>
+						) : (
+							<button
+								onClick={() => setCurrentQuestion(Math.min(quiz.questions.length - 1, currentQuestion + 1))}
+								className="flex items-center gap-2 bg-green-600 text-white px-3 sm:px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex-shrink-0 shadow-lg"
+							>
+								<span className="hidden sm:inline text-sm font-medium">Next</span>
+								<ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+							</button>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

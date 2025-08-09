@@ -160,7 +160,7 @@ const CourseDetailsPage: React.FC = () => {
 		const totalCount = allMaterialIds.length;
 
 		if (totalCount === 0) return 0;
-		return Math.round((visitedCount / totalCount) * 100);
+		return Number(((visitedCount / totalCount) * 100).toFixed(2));
 	};
 
 	const getModuleProgress = (moduleId: number): number => {

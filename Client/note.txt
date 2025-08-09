@@ -21,7 +21,7 @@
 - make a better dashboard UI ()
 - make user profile ()
 - fetch api data for batakgames
-- round progress result
+- round progress result (v)
 
 Note:
     - lack of data ordering

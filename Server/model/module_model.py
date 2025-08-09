@@ -7,7 +7,13 @@ class ModuleModel:
 
     @staticmethod
     def get_modules_by_course(course_id):
-        return supabase.table("modules").select("*").eq("course_id", course_id).execute()
+        return (
+            supabase.table("modules")
+            .select("*")
+            .eq("course_id", course_id)
+            .order("order", desc=False)  # or asc=False for descending
+            .execute()
+        )
 
     @staticmethod
     def get_all_modules():
