@@ -183,3 +183,10 @@ export interface IUserFinalExam {
 	final_exam_id: number;
 	score: number;
 }
+
+export interface IMessage {
+	id: number;
+	type: string;
+	content: Promise<string> | string;
+	timestamp: Date;
+}

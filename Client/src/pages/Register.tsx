@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Eye, EyeOff, User, Mail, Lock, BookOpen} from 'lucide-react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {useAlert} from '../components/Alert';
 import {register} from '../api/auth';
 
@@ -14,6 +14,7 @@ export default function RegisterPage() {
 		confirmPassword: '',
 	});
 	const {showSuccess, showError} = useAlert();
+	const navigate = useNavigate();
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({
@@ -29,6 +30,7 @@ export default function RegisterPage() {
 			const {confirmPassword, ...payload} = formData;
 			await register(payload);
 			showSuccess('Register success.');
+			navigate('/login');
 		} catch (err) {
 			showError('Register error.');
 		}
@@ -55,7 +57,7 @@ export default function RegisterPage() {
 					<div className="space-y-3">
 						{/* Full Name */}
 						<div>
-							<label htmlFor="fullName" className="block text-xs font-medium text-gray-700 mb-1">
+							<label htmlFor="name" className="block text-xs font-medium text-gray-700 mb-1">
 								Nama Lengkap
 							</label>
 							<div className="relative">
@@ -63,8 +65,8 @@ export default function RegisterPage() {
 									<User className="h-4 w-4 text-gray-400" />
 								</div>
 								<input
-									id="fullName"
-									name="fullName"
+									id="name"
+									name="name"
 									type="text"
 									required
 									className="block w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"

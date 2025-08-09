@@ -14,6 +14,15 @@
     -
 5. Quiz Page
 
+=== TO DO ===
+- chatbot (v)
+- fix register (v)
+- change all alert ()
+- make a better dashboard UI
+- make user profile
+- fetch api data for batakgames
+- round progress result
+
 Note:
     - lack of data ordering
     - lack of multi contents materials

@@ -7,6 +7,7 @@ import {viewAllCourse, viewCourseDetails} from '../api/courses';
 import CoursePreviewModal from '../components/CoursePreview';
 import {enrollCourse, viewUserCourse} from '../api/userCourse';
 import {viewMaterialsVisited} from '../api/materialVisited';
+import {useAlert} from '../components/Alert';
 
 const Dashboard = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -14,6 +15,7 @@ const Dashboard = () => {
 	const [isPreview, setIsPreview] = useState<boolean>(false);
 	const [selectedCourse, setSelectedCourse] = useState<CourseDetails>();
 	const [userCourses, setUserCourses] = useState<Course[]>([]);
+	const {showError} = useAlert();
 
 	// Sample course data
 	// const courses = [
@@ -127,7 +129,7 @@ const Dashboard = () => {
 			console.log(res.data);
 			setSelectedCourse(res.data);
 		} catch (err) {
-			alert(`Error selecting course : ${err}`);
+			showError('Terjadi kesalahan.');
 		}
 	};
 

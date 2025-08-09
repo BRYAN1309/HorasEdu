@@ -13,6 +13,7 @@ import ProfilePage from '../pages/Profile';
 import ModulePage from '../pages/Module';
 import MaterialPage from '../pages/Material';
 import FinalExamPage from '../pages/FinalExam';
+import BatakGames from '../pages/Game';
 
 const router = createBrowserRouter([
 	{
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
 							{
 								path: '/profile/:user_id',
 								element: <ProfilePage />,
+							},
+							{
+								path: '/games',
+								element: <BatakGames />,
 							},
 						],
 					},

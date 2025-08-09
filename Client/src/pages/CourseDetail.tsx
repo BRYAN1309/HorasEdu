@@ -80,7 +80,7 @@ const CourseDetailsPage: React.FC = () => {
 				const modulesIds = course.modules.map((m) => m.id);
 				await viewModulesVisited(modulesIds, setModuleVisited);
 			} catch (err) {
-				alert(`Error : ${err}`);
+				showError('Terjadi kesalahan.');
 				console.log('Error getting material visited : ', err);
 			}
 		};
@@ -98,7 +98,7 @@ const CourseDetailsPage: React.FC = () => {
 				const moduleIds = modules.map((module) => module.id);
 				await viewModulesVisited(moduleIds, setModuleVisited);
 			} catch (err) {
-				alert('Error getting all modules');
+				showSuccess('Error mengambil data');
 				console.log('Error getting all modules : ', err);
 			}
 		};

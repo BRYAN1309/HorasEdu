@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {X, Clock, User, BookOpen, ChevronDown, ChevronRight, Play, FileText, Video, Image as ImageIcon, Youtube, Plus} from 'lucide-react';
+import {useAlert} from './Alert';
 
 export interface Material {
 	id: number;
@@ -46,6 +47,7 @@ interface CoursePreviewModalProps {
 const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({course, isOpen, onClose, onAddCourse}) => {
 	const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set());
 	const [isAddingCourse, setIsAddingCourse] = useState(false);
+	const {showSuccess, showError} = useAlert();
 
 	if (!isOpen || !course) {
 		return null;
@@ -65,10 +67,10 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({course, isOpen, 
 		setIsAddingCourse(true);
 		try {
 			await onAddCourse(course.id);
-			alert('Kursus berhasil ditambahkan!');
+			showSuccess('Kursus berhasil ditambahkan!');
 			onClose();
 		} catch (error) {
-			alert('Gagal menambahkan kursus. Silakan coba lagi.');
+			showError('Gagal menambahkan kursus. Silakan coba lagi.');
 			console.log('Error : ', error);
 		} finally {
 			setIsAddingCourse(false);

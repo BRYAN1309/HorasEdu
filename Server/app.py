@@ -4,6 +4,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from config import generate_config  # Updated import
 from flask_cors import CORS
+from model.chatbot import ChatBot
 
 # Import controllers
 from controller import (
@@ -16,7 +17,8 @@ from controller import (
     user_course_controller,
     module_visited_controller,
     final_exam_controller,
-    user_final_exam_controller
+    user_final_exam_controller,
+    chatbot_controller
 )
 from controller import user_quiz_controller
 from controller import quiz_visited_controller
@@ -30,6 +32,8 @@ CORS(
     resources={r"/*": {"origins": "http://localhost:5173"}},
     supports_credentials=True
 )
+
+
 
 # JWT Configuration
 app.config["JWT_SECRET_KEY"] = config.jwt_secret_key
@@ -93,6 +97,17 @@ app.route("/module/view/visited", methods=["GET"])(module_visited_controller.get
 app.route("/final_exam/view/<int:course_id>", methods=["GET"])(final_exam_controller.get_final_exam)
 app.route("/final_exam/submit/<int:final_exam_id>", methods=["POST"])(user_final_exam_controller.submit_final_exam)
 app.route("/final_exam/user/<int:final_exam_id>", methods=["GET"])(user_final_exam_controller.get_user_final_exam)
+
+chatbot = ChatBot()
+
+# chatbot
+app.route("/chatbot/start_conversation", methods=["POST"], endpoint="start_conversation")(
+    lambda: chatbot_controller.start_chat(chatbot=chatbot)
+)
+
+app.route("/chatbot/generate_answer", methods=["POST"], endpoint="generate_answer")(
+    lambda: chatbot_controller.generate_answer(chatbot=chatbot)
+)
 
 if __name__ == "__main__":
     app.run(debug=True)

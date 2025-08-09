@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Search, Plus, BookOpen, Users, Clock, Award, Grid, List, Copyright} from 'lucide-react';
+import {Search, Plus, BookOpen, Users, Clock, Award, Grid, List, Copyright, ShowerHead} from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import type {Course, CourseDetails, IModuleVisited, Module} from '../types/types';
@@ -8,6 +8,7 @@ import {viewUserCourse} from '../api/userCourse';
 import {Link, useLoaderData, useLocation, useNavigate} from 'react-router-dom';
 import {viewModulesVisited} from '../api/moduleVisited';
 import {viewAllModules} from '../api/module';
+import {useAlert} from '../components/Alert';
 
 const Courses = () => {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -16,6 +17,7 @@ const Courses = () => {
 	const [courses, setCourses] = useState<CourseDetails[]>([]);
 	const [userCourse, setUserCourse] = useState<Course[]>([]);
 	const location = useLocation();
+	const {showSuccess, showError} = useAlert();
 
 	const icons = [
 		'📚', // books
@@ -77,7 +79,7 @@ const Courses = () => {
 				const res = await viewCourseDetails();
 				setCourses(res.data);
 			} catch (err) {
-				alert(`Error : ${err}`);
+				showError('Error menampilkan data.');
 				console.log('Error : ', err);
 			}
 		};

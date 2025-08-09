@@ -1,7 +1,7 @@
 import {useContext, useState} from 'react';
 import {Eye, EyeOff, Mail, Lock, BookOpen, Users, Award} from 'lucide-react';
 import {login} from '../api/auth';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {AlertComponent, useAlert} from '../components/Alert';
 
 const Login = () => {
@@ -182,12 +182,14 @@ const Login = () => {
 
 							{/* Footer */}
 							<div className="mt-8 text-center">
-								<p className="text-slate-600 text-sm">
-									Belum punya akun?{' '}
-									<a href="#" className="text-green-600 hover:text-green-700 font-medium transition-colors">
-										Daftar sekarang
-									</a>
-								</p>
+								<Link to={`${location.pathname.split('/').slice(0, -1).join('/')}/register`}>
+									<p className="text-slate-600 text-sm">
+										Belum punya akun?{' '}
+										<a href="#" className="text-green-600 hover:text-green-700 font-medium transition-colors">
+											Daftar sekarang
+										</a>
+									</p>
+								</Link>
 							</div>
 
 							{/* Quick Access */}

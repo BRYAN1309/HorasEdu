@@ -18,6 +18,7 @@ import {
 import {Link, useParams} from 'react-router-dom';
 import {submitFinalExam, viewFinalExam} from '../api/finalExam';
 import type {OptionKey, FinalExam} from '../types/types';
+import {useAlert} from '../components/Alert';
 
 const FinalExamPage = () => {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -29,8 +30,8 @@ const FinalExamPage = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 	const {id_course, id_final_exam} = useParams();
-
-	// Debug logging function
+	const {showError} = useAlert();
+	// Debug logging fuction
 	const debugLog = (message: string, data?: any) => {
 		console.log(`🎯 FinalExam: ${message}`, data || '');
 	};
@@ -122,7 +123,7 @@ const FinalExamPage = () => {
 			debugLog('✅ Submit successful', {score, response: res});
 		} catch (err) {
 			debugLog('❌ Submit failed', err);
-			alert('Error submitting final exam');
+			showError('Error \n');
 			console.error('Error submit final exam:', err);
 		} finally {
 			setShowResults(true);

@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import type {IAuthContext} from '../types/types';
 import api from '../api/api';
 import {useNavigate} from 'react-router-dom';
+import {useAlert} from '../components/Alert';
 
 export const AuthContext = createContext<IAuthContext | null>(null);
 
@@ -9,6 +10,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 	const [name, setName] = useState<string>('');
 	const [email, setEmail] = useState<string>('');
 	const navigate = useNavigate();
+	const {showError, showSuccess} = useAlert();
 
 	useEffect(() => {
 		const authenticate = async () => {
@@ -17,8 +19,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 				setName(response.data.name);
 				setEmail(response.data.email);
 			} catch (err) {
-				alert('Authenticate error');
 				navigate('/login');
+				showError('Autentikasi error');
 			}
 		};
 
