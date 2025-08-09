@@ -53,7 +53,7 @@ export interface FinalExam {
 	duration: number;
 	pass_score: number;
 	description: string;
-	questions: FinalExamQuestions[];
+	final_exam_questions: FinalExamQuestions[];
 }
 
 export interface FinalExamQuestions {
@@ -172,5 +172,14 @@ export interface IUserQuiz {
 	updated_at: Date;
 	user_id: number;
 	quiz_id: number;
+	score: number;
+}
+
+export interface IUserFinalExam {
+	id: number;
+	created_at: Date;
+	updated_at: Date;
+	user_id: number;
+	final_exam_id: number;
 	score: number;
 }

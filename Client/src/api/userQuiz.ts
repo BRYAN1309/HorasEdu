@@ -10,7 +10,12 @@ export const viewUserQuiz = async (quizId: number, setter: React.Dispatch<React.
 			return;
 		}
 
-		console.log(res.data);
+		const data = res.data.data;
+
+		if (data.length < 1) {
+			return;
+		}
+
 		setter(res.data.data[0]);
 	} catch (err) {
 		throw err;

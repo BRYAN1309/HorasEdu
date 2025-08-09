@@ -106,28 +106,28 @@ export const AlertComponent: React.FC<AlertComponentProps> = ({alert, onClose}) 
 };
 
 // Example usage component
-export const AlertExample: React.FC = () => {
-	const {showSuccess, showError} = useAlert();
+// export const AlertExample: React.FC = () => {
+// 	const {showSuccess, showError} = useAlert();
 
-	return (
-		<div className="p-6 space-y-4">
-			<h2 className="text-2xl font-bold text-gray-800 mb-4">Alert Demo</h2>
+// 	return (
+// 		<div className="p-6 space-y-4">
+// 			<h2 className="text-2xl font-bold text-gray-800 mb-4">Alert Demo</h2>
 
-			<div className="space-x-4">
-				<button
-					onClick={() => showSuccess('Operation completed successfully!')}
-					className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-				>
-					Show Success
-				</button>
+// 			<div className="space-x-4">
+// 				<button
+// 					onClick={() => showSuccess('Operation completed successfully!')}
+// 					className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+// 				>
+// 					Show Success
+// 				</button>
 
-				<button
-					onClick={() => showError('Something went wrong!')}
-					className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-				>
-					Show Error
-				</button>
-			</div>
-		</div>
-	);
-};
+// 				<button
+// 					onClick={() => showError('Something went wrong!')}
+// 					className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+// 				>
+// 					Show Error
+// 				</button>
+// 			</div>
+// 		</div>
+// 	);
+// };

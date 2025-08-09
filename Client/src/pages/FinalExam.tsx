@@ -1,20 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
 	ArrowLeft,
 	Clock,
 	CheckCircle,
 	XCircle,
-	Award,
 	ChevronRight,
 	ChevronLeft,
 	RotateCcw,
-	Trophy,
 	Target,
 	AlertCircle,
 	BookOpen,
 	GraduationCap,
 	Shield,
 	FileText,
+	Loader,
 } from 'lucide-react';
 import {Link, useParams} from 'react-router-dom';
 import {submitFinalExam, viewFinalExam} from '../api/finalExam';
@@ -24,31 +23,61 @@ const FinalExamPage = () => {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [selectedAnswers, setSelectedAnswers] = useState<{[key: string]: string}>({});
 	const [showResults, setShowResults] = useState(false);
-	const [timeLeft, setTimeLeft] = useState(0); // Will be set from exam duration
+	const [timeLeft, setTimeLeft] = useState(0);
 	const [examStarted, setExamStarted] = useState(false);
 	const [finalExam, setFinalExam] = useState<FinalExam>();
-	const {id_final_exam} = useParams();
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string>('');
+	const {id_course, id_final_exam} = useParams();
+
+	// Debug logging function
+	const debugLog = (message: string, data?: any) => {
+		console.log(`🎯 FinalExam: ${message}`, data || '');
+	};
 
 	useEffect(() => {
-		if (!id_final_exam) return;
+		debugLog('Component mounted', {id_course, id_final_exam});
+
+		if (!id_final_exam || !id_course) {
+			debugLog('❌ Missing required parameters');
+			setError('Missing course or exam ID');
+			setLoading(false);
+			return;
+		}
 
 		const viewFinalExamPage = async () => {
 			try {
-				await viewFinalExam(Number(id_final_exam), setFinalExam);
+				debugLog('📡 Fetching final exam data...');
+				setLoading(true);
+				setError('');
+
+				await viewFinalExam(setFinalExam, Number(id_course));
+				debugLog('✅ API call completed successfully');
 			} catch (err) {
-				alert('Error loading final exam');
-				console.log('Error view final exam page : ', err);
+				debugLog('❌ Error loading final exam', err);
+				setError('Failed to load final exam. Please try again.');
+				console.error('Error view final exam page:', err);
+			} finally {
+				setLoading(false);
 			}
 		};
 
 		viewFinalExamPage();
-	}, []);
+	}, [id_course, id_final_exam]); // Added dependencies
 
 	useEffect(() => {
-		if (finalExam) {
-			console.log('FINAL EXAM : ', finalExam);
+		debugLog('Final exam data updated', {
+			hasFinalExam: !!finalExam,
+			hasQuestions: !!finalExam?.final_exam_questions,
+			questionsLength: finalExam?.final_exam_questions?.length,
+			duration: finalExam?.duration,
+		});
+
+		if (finalExam && finalExam.duration) {
 			// Set timer based on exam duration (convert minutes to seconds)
-			setTimeLeft(finalExam.duration * 60);
+			const timeInSeconds = finalExam.duration * 60;
+			setTimeLeft(timeInSeconds);
+			debugLog('⏰ Timer set', {duration: finalExam.duration, timeInSeconds});
 		}
 	}, [finalExam]);
 
@@ -59,6 +88,7 @@ const FinalExamPage = () => {
 		const timer = setInterval(() => {
 			setTimeLeft((prev) => {
 				if (prev <= 1) {
+					debugLog('⏰ Time expired - auto submitting');
 					// Auto-submit when time runs out
 					handleSubmitFinalExam();
 					return 0;
@@ -70,16 +100,15 @@ const FinalExamPage = () => {
 		return () => clearInterval(timer);
 	}, [examStarted, timeLeft, showResults]);
 
-	if (!finalExam || !finalExam.questions) return null;
-
-	const formatTime = (seconds: any) => {
+	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60);
 		const secs = seconds % 60;
 		return `${mins}:${secs.toString().padStart(2, '0')}`;
 	};
 
 	const handleAnswerSelect = (questionId: any, answer: string) => {
-		setSelectedAnswers((prev: any) => ({
+		debugLog('Answer selected', {questionId, answer});
+		setSelectedAnswers((prev) => ({
 			...prev,
 			[questionId]: answer,
 		}));
@@ -87,39 +116,125 @@ const FinalExamPage = () => {
 
 	const handleSubmitFinalExam = async () => {
 		try {
-			const res = await submitFinalExam(calculateScore(), finalExam.id);
-			console.log('Submit final exam response : ', res);
+			debugLog('📤 Submitting final exam...');
+			const score = calculateScore();
+			const res = await submitFinalExam(score, finalExam!.id);
+			debugLog('✅ Submit successful', {score, response: res});
 		} catch (err) {
+			debugLog('❌ Submit failed', err);
 			alert('Error submitting final exam');
-			console.log('Error submit final exam : ', err);
+			console.error('Error submit final exam:', err);
 		} finally {
 			setShowResults(true);
 		}
 	};
 
 	const calculateScore = () => {
+		if (!finalExam?.final_exam_questions) return 0;
+
 		let correct = 0;
-		finalExam.questions.forEach((question) => {
+		finalExam.final_exam_questions.forEach((question) => {
 			if (selectedAnswers[question.id] === question.correct_answer_value) {
 				correct++;
 			}
 		});
-		return Math.round((correct / finalExam.questions.length) * 100);
+		const score = Math.round((correct / finalExam.final_exam_questions.length) * 100);
+		debugLog('📊 Score calculated', {correct, total: finalExam.final_exam_questions.length, score});
+		return score;
 	};
 
-	const getScoreColor = (score: any) => {
+	const getScoreColor = (score: number) => {
 		if (score >= 80) return 'text-green-600';
 		if (score >= 60) return 'text-yellow-600';
 		return 'text-red-600';
 	};
 
-	const getScoreIcon = (score: any) => {
+	const getScoreIcon = (score: number) => {
 		if (score >= 80) return <GraduationCap className="w-8 h-8 text-green-600" />;
 		if (score >= 60) return <Target className="w-8 h-8 text-yellow-600" />;
 		return <AlertCircle className="w-8 h-8 text-red-600" />;
 	};
 
+	const resetExam = () => {
+		debugLog('🔄 Resetting exam');
+		setShowResults(false);
+		setCurrentQuestion(0);
+		setSelectedAnswers({});
+		setExamStarted(false);
+		setTimeLeft(finalExam!.duration * 60);
+	};
+
 	const optionKeys: OptionKey[] = ['option_a', 'option_b', 'option_c', 'option_d'];
+
+	// Loading state
+	if (loading) {
+		return (
+			<div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+				<div className="text-center">
+					<Loader className="animate-spin rounded-full h-12 w-12 text-indigo-600 mx-auto mb-4" />
+					<p className="text-gray-600 text-lg">Loading exam data...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Error state
+	if (error) {
+		return (
+			<div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+				<div className="text-center bg-white rounded-xl shadow-lg p-8 max-w-md">
+					<AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+					<h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Exam</h2>
+					<p className="text-gray-600 mb-6">{error}</p>
+					<button
+						onClick={() => window.location.reload()}
+						className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+					>
+						Try Again
+					</button>
+				</div>
+			</div>
+		);
+	}
+
+	// Check if exam data is valid
+	if (!finalExam) {
+		debugLog('❌ No final exam data available');
+		return (
+			<div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+				<div className="text-center bg-white rounded-xl shadow-lg p-8 max-w-md">
+					<AlertCircle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+					<h2 className="text-2xl font-bold text-gray-900 mb-4">No Exam Data</h2>
+					<p className="text-gray-600 mb-6">Unable to load exam information.</p>
+					<Link
+						to={`${location.pathname.split('/').slice(0, -2).join('/')}`}
+						className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+					>
+						Back to Course
+					</Link>
+				</div>
+			</div>
+		);
+	}
+
+	if (!finalExam.final_exam_questions || finalExam.final_exam_questions.length === 0) {
+		debugLog('❌ No final_exam_questions available', {final_exam_questions: finalExam.final_exam_questions});
+		return (
+			<div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+				<div className="text-center bg-white rounded-xl shadow-lg p-8 max-w-md">
+					<AlertCircle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+					<h2 className="text-2xl font-bold text-gray-900 mb-4">No Questions Available</h2>
+					<p className="text-gray-600 mb-6">This exam doesn't have any final_exam_questions yet.</p>
+					<Link
+						to={`${location.pathname.split('/').slice(0, -2).join('/')}`}
+						className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+					>
+						Back to Course
+					</Link>
+				</div>
+			</div>
+		);
+	}
 
 	if (!examStarted) {
 		return (
@@ -128,12 +243,13 @@ const FinalExamPage = () => {
 				<div className="bg-white border-b-2 border-indigo-200 shadow-sm">
 					<div className="max-w-4xl mx-auto px-6 py-4">
 						<div className="flex items-center gap-4">
-							<button className="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors">
+							<Link
+								to={`${location.pathname.split('/').slice(0, -2).join('/')}`}
+								className="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors"
+							>
 								<ArrowLeft className="w-5 h-5" />
-								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
-									<span>Back to Course</span>
-								</Link>
-							</button>
+								<span>Back to Course</span>
+							</Link>
 						</div>
 					</div>
 				</div>
@@ -157,7 +273,7 @@ const FinalExamPage = () => {
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 							<div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
 								<FileText className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-								<div className="text-3xl font-bold text-blue-600 mb-2">{finalExam.questions.length}</div>
+								<div className="text-3xl font-bold text-blue-600 mb-2">{finalExam.final_exam_questions.length}</div>
 								<div className="text-gray-600 font-medium">Questions</div>
 							</div>
 							<div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
@@ -181,7 +297,7 @@ const FinalExamPage = () => {
 									<h3 className="text-lg font-semibold text-red-800 mb-2">Important Instructions</h3>
 									<ul className="text-sm text-red-700 space-y-1">
 										<li>• This is a proctored final examination</li>
-										<li>• You have {finalExam.duration} minutes to complete all questions</li>
+										<li>• You have {finalExam.duration} minutes to complete all final_exam_questions</li>
 										<li>• Once started, the timer cannot be paused</li>
 										<li>• Review your answers carefully before submitting</li>
 										<li>• A minimum score of {finalExam.pass_score}% is required to pass</li>
@@ -192,7 +308,10 @@ const FinalExamPage = () => {
 
 						<div className="flex justify-center gap-4">
 							<button
-								onClick={() => setExamStarted(true)}
+								onClick={() => {
+									debugLog('🚀 Starting exam');
+									setExamStarted(true);
+								}}
 								className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-10 py-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
 							>
 								Begin Final Exam
@@ -206,7 +325,7 @@ const FinalExamPage = () => {
 
 	if (showResults) {
 		const score = calculateScore();
-		const correctAnswers = finalExam.questions.filter((q) => selectedAnswers[q.id] === q.correct_answer_value).length;
+		const correctAnswers = finalExam.final_exam_questions.filter((q) => selectedAnswers[q.id] === q.correct_answer_value).length;
 		const isPassed = score >= finalExam.pass_score;
 
 		return (
@@ -215,12 +334,13 @@ const FinalExamPage = () => {
 				<div className="bg-white border-b-2 border-indigo-200 shadow-sm">
 					<div className="max-w-4xl mx-auto px-6 py-4">
 						<div className="flex items-center gap-4">
-							<button className="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors">
+							<Link
+								to={`${location.pathname.split('/').slice(0, -2).join('/')}`}
+								className="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors"
+							>
 								<ArrowLeft className="w-5 h-5" />
-								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
-									<span>Back to Course</span>
-								</Link>
-							</button>
+								<span>Back to Course</span>
+							</Link>
 						</div>
 					</div>
 				</div>
@@ -251,7 +371,7 @@ const FinalExamPage = () => {
 								<div className="text-gray-600 font-medium">Correct</div>
 							</div>
 							<div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 text-center border border-red-100">
-								<div className="text-4xl font-bold text-red-600 mb-2">{finalExam.questions.length - correctAnswers}</div>
+								<div className="text-4xl font-bold text-red-600 mb-2">{finalExam.final_exam_questions.length - correctAnswers}</div>
 								<div className="text-gray-600 font-medium">Incorrect</div>
 							</div>
 							<div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center border border-purple-100">
@@ -267,7 +387,7 @@ const FinalExamPage = () => {
 								Answer Review
 							</h2>
 							<div className="space-y-6">
-								{finalExam.questions.map((question, index) => {
+								{finalExam.final_exam_questions.map((question, index) => {
 									const isCorrect = selectedAnswers[question.id] === question.correct_answer_value;
 									const userAnswer = selectedAnswers[question.id];
 
@@ -305,13 +425,7 @@ const FinalExamPage = () => {
 						<div className="flex justify-center gap-4">
 							{!isPassed && (
 								<button
-									onClick={() => {
-										setShowResults(false);
-										setCurrentQuestion(0);
-										setSelectedAnswers({});
-										setExamStarted(false);
-										setTimeLeft(finalExam.duration * 60);
-									}}
+									onClick={resetExam}
 									className="flex items-center gap-3 bg-gray-200 text-gray-700 px-8 py-3 rounded-xl hover:bg-gray-300 transition-colors font-semibold"
 								>
 									<RotateCcw className="w-5 h-5" />
@@ -319,9 +433,11 @@ const FinalExamPage = () => {
 								</button>
 							)}
 							{isPassed && (
-								<button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg">
-									Continue to Certificate
-								</button>
+								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
+									<button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg">
+										Back to course
+									</button>
+								</Link>
 							)}
 						</div>
 					</div>
@@ -330,8 +446,8 @@ const FinalExamPage = () => {
 		);
 	}
 
-	const question = finalExam.questions[currentQuestion];
-	const progress = ((currentQuestion + 1) / finalExam.questions.length) * 100;
+	const question = finalExam.final_exam_questions[currentQuestion];
+	const progress = ((currentQuestion + 1) / finalExam.final_exam_questions.length) * 100;
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
@@ -340,12 +456,13 @@ const FinalExamPage = () => {
 				<div className="max-w-4xl mx-auto px-6 py-4">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-4">
-							<button className="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors">
+							<Link
+								to={`${location.pathname.split('/').slice(0, -2).join('/')}`}
+								className="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors"
+							>
 								<ArrowLeft className="w-5 h-5" />
-								<Link to={`${location.pathname.split('/').slice(0, -2).join('/')}`}>
-									<span>Back to Course</span>
-								</Link>
-							</button>
+								<span>Back to Course</span>
+							</Link>
 						</div>
 
 						<div className="flex items-center gap-8">
@@ -359,7 +476,7 @@ const FinalExamPage = () => {
 							</div>
 
 							<div className="text-base text-gray-600 font-medium">
-								Question {currentQuestion + 1} of {finalExam.questions.length}
+								Question {currentQuestion + 1} of {finalExam.final_exam_questions.length}
 							</div>
 						</div>
 					</div>
@@ -396,6 +513,9 @@ const FinalExamPage = () => {
 						{optionKeys.map((key, index) => {
 							const option = question[key];
 							const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
+
+							if (!option) return null; // Skip if option doesn't exist
+
 							return (
 								<button
 									key={index}
@@ -440,14 +560,14 @@ const FinalExamPage = () => {
 					</button>
 
 					<div className="flex items-center gap-3">
-						{finalExam.questions.map((_, index) => (
+						{finalExam.final_exam_questions.map((_, index) => (
 							<button
 								key={index}
 								onClick={() => setCurrentQuestion(index)}
 								className={`w-10 h-10 rounded-full text-sm font-semibold transition-all ${
 									index === currentQuestion
 										? 'bg-indigo-600 text-white shadow-lg'
-										: selectedAnswers[finalExam.questions[index].id] !== undefined
+										: selectedAnswers[finalExam.final_exam_questions[index].id] !== undefined
 										? 'bg-green-100 text-green-700 border-2 border-green-300'
 										: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
 								}`}
@@ -457,12 +577,12 @@ const FinalExamPage = () => {
 						))}
 					</div>
 
-					{currentQuestion === finalExam.questions.length - 1 ? (
+					{currentQuestion === finalExam.final_exam_questions.length - 1 ? (
 						<button
-							onClick={async () => await handleSubmitFinalExam()}
-							disabled={Object.keys(selectedAnswers).length !== finalExam.questions.length}
+							onClick={handleSubmitFinalExam}
+							disabled={Object.keys(selectedAnswers).length !== finalExam.final_exam_questions.length}
 							className={`flex items-center gap-3 px-8 py-3 rounded-xl transition-all font-semibold ${
-								Object.keys(selectedAnswers).length !== finalExam.questions.length
+								Object.keys(selectedAnswers).length !== finalExam.final_exam_questions.length
 									? 'bg-gray-100 text-gray-400 cursor-not-allowed'
 									: 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl'
 							}`}
@@ -472,7 +592,7 @@ const FinalExamPage = () => {
 						</button>
 					) : (
 						<button
-							onClick={() => setCurrentQuestion(Math.min(finalExam.questions.length - 1, currentQuestion + 1))}
+							onClick={() => setCurrentQuestion(Math.min(finalExam.final_exam_questions.length - 1, currentQuestion + 1))}
 							className="flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl"
 						>
 							Next

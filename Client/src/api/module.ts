@@ -6,7 +6,6 @@ import api from './api';
 export const viewModule = async (moduleId: number) => {
 	try {
 		const res = await api.get(`/modules/${moduleId}`);
-		console.log(res.data);
 		return res.data.data;
 	} catch (err) {
 		throw err;

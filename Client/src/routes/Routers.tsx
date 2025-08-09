@@ -69,7 +69,7 @@ const router = createBrowserRouter([
 				],
 			},
 		],
-		errorElement: <NotFound />,
+		// errorElement: <NotFound />,
 	},
 	{
 		element: <Login />,

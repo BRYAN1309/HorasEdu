@@ -58,7 +58,6 @@ const ModulePage = () => {
 
 				await viewUserQuiz(module.quiz.id, setUserQuiz);
 			} catch (err) {
-				alert('Erro view material visited');
 				console.log('Error view material visited : ', err);
 			}
 		};

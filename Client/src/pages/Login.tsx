@@ -27,12 +27,12 @@ const Login = () => {
 		try {
 			await login({email: email, password: password});
 			console.log('Logging in with', {email, password});
-			alert('Login berhasil!');
+			showSuccess('Login success.');
 			navigate('/dashboard');
 		} catch (err) {
 			showError('Login error.');
 		} finally {
-			showSuccess('Login success.');
+			setIsLoading(false);
 		}
 	};
 

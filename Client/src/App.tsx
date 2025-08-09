@@ -6,9 +6,7 @@ import {AlertProvider} from './components/Alert';
 function App() {
 	return (
 		<AppProvider>
-			<AlertProvider>
-				<Outlet />
-			</AlertProvider>
+			<Outlet />
 		</AppProvider>
 	);
 }
