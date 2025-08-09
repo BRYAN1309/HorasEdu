@@ -17,9 +17,9 @@
 === TO DO ===
 - chatbot (v)
 - fix register (v)
-- change all alert ()
-- make a better dashboard UI
-- make user profile
+- change all alert (v)
+- make a better dashboard UI ()
+- make user profile ()
 - fetch api data for batakgames
 - round progress result
 

@@ -21,6 +21,7 @@ import type {IMaterialsVisited, Material} from '../types/types';
 import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
 import {viewMaterials} from '../api/material';
 import {createMaterialVisited, viewMaterialsVisited} from '../api/materialVisited';
+import {renderFormattedText} from '../utils/utils';
 
 const MaterialPage = () => {
 	// const [currentMaterial, setCurrentMaterial] = useState('article');
@@ -90,7 +91,7 @@ const MaterialPage = () => {
 
 	const renderArticleContent = () => (
 		<div className="prose max-w-none">
-			<div className="text-gray-800 leading-relaxed" dangerouslySetInnerHTML={{__html: material?.content || ''}} />
+			<p className="text-gray-800 leading-relaxed">{renderFormattedText(material?.content || '')}</p>
 		</div>
 	);
 
@@ -234,7 +235,7 @@ const MaterialPage = () => {
 					<img src={material?.image_url} alt={''} className="w-full h-auto" />
 					<div className="p-6">
 						<h3 className="font-semibold text-gray-900 mb-2 text-xl">Konten</h3>
-						<p className="text-gray-600">{material?.content}</p>
+						<p className="text-gray-600">{renderFormattedText(material?.content || '')}</p>
 					</div>
 				</div>
 			</div>
