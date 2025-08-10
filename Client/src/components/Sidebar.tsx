@@ -23,7 +23,7 @@ const Sidebar = () => {
 			} lg:translate-x-0 lg:static lg:inset-0`}
 		>
 			<div className="flex items-center justify-between p-6 border-b border-gray-200">
-				<h2 className="text-xl font-bold text-gray-900">Aksara Batak</h2>
+				<h2 className="text-xl font-bold text-gray-900">HorasEdu</h2>
 				<button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 hover:bg-gray-100 rounded-md transition-colors">
 					<X size={20} />
 				</button>
@@ -34,7 +34,7 @@ const Sidebar = () => {
 					<Link to={`/${item.label.toLowerCase()}`}>
 						<button
 							key={index}
-							className={`w-full flex items-center px-4 py-3 text-left text-sm font-medium rounded-lg transition-colors mb-1 ${
+							className={`hover:cursor-pointer w-full flex items-center px-4 py-3 text-left text-sm font-medium rounded-lg transition-colors mb-1 ${
 								item.active ? 'bg-green-50 text-green-700 border-r-2 border-green-600' : 'text-gray-700 hover:bg-gray-50'
 							}`}
 						>

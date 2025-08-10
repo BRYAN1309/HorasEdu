@@ -32,23 +32,23 @@ const BatakGames = () => {
 	// Sample Batak data (in real app, this would come from your API)
 	const batakData = {
 		characters: [
-			{batak: 'ᯀ', latin: 'A', meaning: 'Alif'},
-			{batak: 'ᯂ', latin: 'BA', meaning: 'Ba'},
-			{batak: 'ᯃ', latin: 'CA', meaning: 'Ca'},
-			{batak: 'ᯄ', latin: 'DA', meaning: 'Da'},
-			{batak: 'ᯅ', latin: 'GA', meaning: 'Ga'},
-			{batak: 'ᯆ', latin: 'HA', meaning: 'Ha'},
-			{batak: 'ᯇ', latin: 'JA', meaning: 'Ja'},
-			{batak: 'ᯈ', latin: 'KA', meaning: 'Ka'},
-			{batak: 'ᯉ', latin: 'LA', meaning: 'La'},
-			{batak: 'ᯊ', latin: 'MA', meaning: 'Ma'},
+			{batak: '/images/a.png', latin: 'A', meaning: 'Alif'},
+			{batak: '/images/ba.png', latin: 'BA', meaning: 'Ba'},
+			{batak: '/images/ca.png', latin: 'CA', meaning: 'Ca'},
+			{batak: '/images/da.png', latin: 'DA', meaning: 'Da'},
+			{batak: '/images/ga.png', latin: 'GA', meaning: 'Ga'},
+			{batak: '/images/ha.png', latin: 'HA', meaning: 'Ha'},
+			{batak: '/images/ja.png', latin: 'JA', meaning: 'Ja'},
+			{batak: '/images/ka.png', latin: 'KA', meaning: 'Ka'},
+			{batak: '/images/la.png', latin: 'LA', meaning: 'La'},
+			{batak: '/images/ma.png', latin: 'MA', meaning: 'Ma'},
 		],
 		words: [
-			{batak: 'ᯀᯔᯉᯱ', latin: 'Adat', meaning: 'Tradition'},
-			{batak: 'ᯅᯩᯔᯅᯰᯀ', latin: 'Gondang', meaning: 'Music'},
-			{batak: 'ᯞᯂᯮ', latin: 'Ulos', meaning: 'Traditional cloth'},
-			{batak: 'ᯉᯩᯔᯅ', latin: 'Dohot', meaning: 'And/with'},
-			{batak: 'ᯅᯩᯔᯅᯰᯀ', latin: 'Horas', meaning: 'Hello/Goodbye'},
+			{latin: 'Adat', meaning: 'Tradition'},
+			{latin: 'Gondang', meaning: 'Music'},
+			{latin: 'Ulos', meaning: 'Traditional cloth'},
+			{latin: 'Dohot', meaning: 'And/with'},
+			{latin: 'Horas', meaning: 'Hello/Goodbye'},
 		],
 	};
 
@@ -303,7 +303,7 @@ const BatakGames = () => {
 				</div>
 
 				{/* Stats Cards */}
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+				{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
 					<div className="bg-white rounded-lg shadow p-6">
 						<div className="flex items-center">
 							<div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4">
@@ -339,7 +339,7 @@ const BatakGames = () => {
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
@@ -403,7 +403,8 @@ const BatakGames = () => {
 						>
 							{flippedCards.includes(card.id) || matchedCards.includes(card.id) ? (
 								<div className="text-center">
-									<div className="text-4xl font-bold text-blue-600 mb-2">{card.batak}</div>
+									<img src={card.batak} alt="" className="w-32 h-32 object-contain" />
+									{/* <div className="text-4xl font-bold text-blue-600 mb-2">{card.batak}</div> */}
 									<div className="text-lg text-gray-600">{card.latin}</div>
 								</div>
 							) : (
@@ -646,7 +647,8 @@ const BatakGames = () => {
 										}`}
 									>
 										<div className="text-center">
-											<div className="text-4xl font-bold text-blue-600 mb-2">{pair.batak}</div>
+											<img src={pair.batak} alt="" className="w-32 h-32 object-contain" />
+											{/* <div className="text-4xl font-bold text-blue-600 mb-2">{pair.batak}</div> */}
 											<div className="text-sm text-gray-600">Drag me!</div>
 										</div>
 									</div>

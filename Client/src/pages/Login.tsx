@@ -1,5 +1,5 @@
 import {useContext, useState} from 'react';
-import {Eye, EyeOff, Mail, Lock, BookOpen, Users, Award} from 'lucide-react';
+import {Eye, EyeOff, Mail, Lock, BookOpen, Users, Award, Bot} from 'lucide-react';
 import {login} from '../api/auth';
 import {Link, useNavigate} from 'react-router-dom';
 import {AlertComponent, useAlert} from '../components/Alert';
@@ -69,11 +69,11 @@ const Login = () => {
 
 								<div className="flex items-center p-4 bg-white/80 rounded-2xl shadow-sm">
 									<div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-										<Users className="w-6 h-6 text-blue-600" />
+										<Bot className="w-6 h-6 text-blue-600" />
 									</div>
 									<div>
-										<h3 className="font-semibold text-slate-800">Belajar Bersama</h3>
-										<p className="text-sm text-slate-600">Komunitas pembelajar aktif</p>
+										<h3 className="font-semibold text-slate-800">Belajar Dengan AI Bot</h3>
+										<p className="text-sm text-slate-600">Sesi belajar yang interaktif dan informatif dengan chatbot kita</p>
 									</div>
 								</div>
 
@@ -82,8 +82,8 @@ const Login = () => {
 										<Award className="w-6 h-6 text-yellow-600" />
 									</div>
 									<div>
-										<h3 className="font-semibold text-slate-800">Raih Pencapaian</h3>
-										<p className="text-sm text-slate-600">Sistem penghargaan menarik</p>
+										<h3 className="font-semibold text-slate-800">Instruktur</h3>
+										<p className="text-sm text-slate-600">Pelajari material yang dibuat oleh instruktur terpecaya.</p>
 									</div>
 								</div>
 							</div>
@@ -153,7 +153,7 @@ const Login = () => {
 								)}
 
 								{/* Options */}
-								<div className="flex items-center justify-between text-sm">
+								{/* <div className="flex items-center justify-between text-sm">
 									<label className="flex items-center text-slate-600 cursor-pointer">
 										<input type="checkbox" className="mr-2 accent-green-500" />
 										Ingat saya
@@ -161,7 +161,7 @@ const Login = () => {
 									<a href="#" className="text-green-600 hover:text-green-700 font-medium transition-colors">
 										Lupa password?
 									</a>
-								</div>
+								</div> */}
 
 								{/* Submit */}
 								<button
@@ -193,7 +193,7 @@ const Login = () => {
 							</div>
 
 							{/* Quick Access */}
-							<div className="mt-6">
+							{/* <div className="mt-6">
 								<div className="relative">
 									<div className="absolute inset-0 flex items-center">
 										<div className="w-full border-t border-slate-200"></div>
@@ -213,7 +213,7 @@ const Login = () => {
 										Mode Tamu
 									</button>
 								</div>
-							</div>
+							</div> */}
 						</div>
 					</div>
 				</div>

@@ -13,9 +13,6 @@ export default function LandingPage() {
 			level: 'Pemula',
 			duration: '4 jam',
 			modules: '12 modul',
-			students: 245,
-			rating: 4.8,
-			progress: 75,
 			status: 'Aktif',
 			instructor: 'Dr. Mangihut Siraji',
 			description: 'Pelajari dasar-dasar aksara Batak tradisional',
@@ -27,9 +24,6 @@ export default function LandingPage() {
 			level: 'Menengah',
 			duration: '6 jam',
 			modules: '16 modul',
-			students: 169,
-			rating: 4.9,
-			progress: 45,
 			status: 'Aktif',
 			instructor: 'Prof. Sari Matondang',
 			description: 'Tingkatkan kemampuan menulis aksara Batak',
@@ -41,9 +35,6 @@ export default function LandingPage() {
 			level: 'Pemula',
 			duration: '3 jam',
 			modules: '8 modul',
-			students: 156,
-			rating: 5.0,
-			progress: 100,
 			status: 'Selesai',
 			instructor: 'Dr. Poltak Sinaga',
 			description: 'Memahami sejarah dan budaya aksara Batak',
@@ -69,21 +60,6 @@ export default function LandingPage() {
 		},
 	];
 
-	const testimonials = [
-		{
-			name: 'Maria Simbolon',
-			role: 'Mahasiswa',
-			content: 'Platform pembelajaran yang sangat membantu untuk memahami budaya Batak melalui aksaranya.',
-			rating: 5,
-		},
-		{
-			name: 'Robert Hutabarat',
-			role: 'Guru',
-			content: 'Materi yang lengkap dan mudah dipahami. Sangat cocok untuk pemula maupun yang ingin mendalami.',
-			rating: 5,
-		},
-	];
-
 	return (
 		<div className="min-h-screen bg-gray-50">
 			{/* Navigation */}
@@ -94,7 +70,7 @@ export default function LandingPage() {
 							<div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
 								<BookOpen className="h-5 w-5 text-white" />
 							</div>
-							<span className="text-xl font-bold text-gray-900">Aksara Batak</span>
+							<span className="text-xl font-bold text-gray-900">HorasEdu</span>
 						</div>
 
 						<div className="hidden md:flex items-center space-x-8">
@@ -129,12 +105,12 @@ export default function LandingPage() {
 							<a href="#kursus" className="block text-gray-700 hover:text-green-600">
 								Kursus
 							</a>
-							<a href="#tentang" className="block text-gray-700 hover:text-green-600">
+							{/* <a href="#tentang" className="block text-gray-700 hover:text-green-600">
 								Tentang
-							</a>
-							<a href="#kontak" className="block text-gray-700 hover:text-green-600">
+							</a> */}
+							{/* <a href="#kontak" className="block text-gray-700 hover:text-green-600">
 								Kontak
-							</a>
+							</a> */}
 							<button className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
 								Masuk
 							</button>
@@ -351,10 +327,10 @@ export default function LandingPage() {
 										>
 											{course.status}
 										</span>
-										<div className="flex items-center space-x-1">
+										{/* <div className="flex items-center space-x-1">
 											<Star className="h-4 w-4 text-yellow-400 fill-current" />
 											<span className="text-sm font-medium text-gray-700">{course.rating}</span>
-										</div>
+										</div> */}
 									</div>
 
 									<h3 className="text-xl font-bold text-gray-900 mb-2">{course.title}</h3>
@@ -363,30 +339,30 @@ export default function LandingPage() {
 									<div className="flex items-center justify-between text-sm text-gray-500 mb-4">
 										<span>{course.duration}</span>
 										<span>{course.modules}</span>
-										<span>{course.students} siswa</span>
+										{/* <span>{course.students} siswa</span> */}
 									</div>
 
 									<div className="mb-4">
-										<div className="flex items-center justify-between text-sm mb-2">
+										{/* <div className="flex items-center justify-between text-sm mb-2">
 											<span className="text-gray-600">Progress</span>
 											<span className="font-medium text-gray-900">{course.progress}%</span>
-										</div>
-										<div className="w-full bg-gray-200 rounded-full h-2">
+										</div> */}
+										{/* <div className="w-full bg-gray-200 rounded-full h-2">
 											<div className="h-2 rounded-full bg-green-500" style={{width: `${course.progress}%`}}></div>
-										</div>
+										</div> */}
 									</div>
 
 									<div className="text-sm text-gray-600 mb-6">
 										Instruktur: <span className="font-medium text-gray-900">{course.instructor}</span>
 									</div>
 
-									<button
+									{/* <button
 										className={`w-full py-3 rounded-lg font-medium transition-colors ${
 											course.progress === 100 ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-green-600 text-white hover:bg-green-700'
 										}`}
 									>
 										{course.progress === 100 ? 'Tinjau Kembali' : 'Lanjutkan'}
-									</button>
+									</button> */}
 								</div>
 							</div>
 						))}
@@ -453,11 +429,11 @@ export default function LandingPage() {
 								<div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
 									<BookOpen className="h-5 w-5 text-white" />
 								</div>
-								<span className="text-xl font-bold">Aksara Batak</span>
+								<span className="text-xl font-bold">HorasEdu</span>
 							</div>
 							<p className="text-gray-400">Platform pembelajaran aksara Batak terdepan untuk melestarikan budaya tradisional.</p>
 						</div>
-						<div>
+						{/* <div>
 							<h3 className="font-semibold mb-4">Kursus</h3>
 							<div className="space-y-2 text-gray-400">
 								<div className="hover:text-green-400 cursor-pointer transition-colors">Aksara Dasar</div>
@@ -483,10 +459,10 @@ export default function LandingPage() {
 								<div className="hover:text-green-400 cursor-pointer transition-colors">Blog</div>
 								<div className="hover:text-green-400 cursor-pointer transition-colors">Kebijakan Privasi</div>
 							</div>
-						</div>
+						</div> */}
 					</div>
 					<div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-						<p>&copy; 2025 Aksara Batak. Semua hak cipta dilindungi.</p>
+						<p>&copy; 2025 HorasEdu. Semua hak cipta dilindungi.</p>
 					</div>
 				</div>
 			</footer>

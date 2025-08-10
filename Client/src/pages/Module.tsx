@@ -187,7 +187,12 @@ const ModulePage = () => {
 					<div className="flex items-start justify-between mb-4">
 						<div className="flex-1">
 							<h1 className="text-2xl font-bold text-gray-900 mb-2">{filteredModule?.title}</h1>
+							<img src={filteredModule?.image_url} alt="" className="w-full max-h-1/2 rounded-md my-6" />
 							<p className="text-gray-600 mb-4">{filteredModule?.description}</p>
+							<div className="text-left mb-2">
+								<div className="text-sm text-gray-500 mb-1">Progress</div>
+								<div className="text-2xl font-bold text-green-600">{progress()}%</div>
+							</div>
 							<div className="flex items-center gap-4 text-sm text-gray-500">
 								<div className="flex items-center gap-1">
 									<Clock className="w-4 h-4" />
@@ -198,10 +203,6 @@ const ModulePage = () => {
 									<span>{filteredModule?.materials.length} materials</span>
 								</div>
 							</div>
-						</div>
-						<div className="text-right">
-							<div className="text-sm text-gray-500 mb-1">Progress</div>
-							<div className="text-2xl font-bold text-green-600">{progress()}%</div>
 						</div>
 					</div>
 

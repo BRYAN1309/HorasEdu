@@ -27,6 +27,11 @@ export default function RegisterPage() {
 		if (!formData) return;
 
 		try {
+			if (formData.confirmPassword !== formData.password) {
+				showError('Konfirmasi kata sandi tidak cocok.');
+				return;
+			}
+
 			const {confirmPassword, ...payload} = formData;
 			await register(payload);
 			showSuccess('Register success.');
@@ -46,7 +51,7 @@ export default function RegisterPage() {
 						<div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
 							<BookOpen className="w-4 h-4 text-white" />
 						</div>
-						<h1 className="text-lg font-bold text-gray-900">Aksara Batak</h1>
+						<h1 className="text-lg font-bold text-gray-900">HorasEdu</h1>
 					</div>
 					<h2 className="text-xl font-bold text-gray-900 mb-1">Daftar Akun</h2>
 					<p className="text-xs text-gray-600">Bergabunglah dengan komunitas pembelajaran Aksara Batak</p>
@@ -54,7 +59,13 @@ export default function RegisterPage() {
 
 				{/* Registration Form */}
 				<div className="bg-white rounded-xl shadow-lg p-6">
-					<div className="space-y-3">
+					<form
+						className="space-y-3"
+						onSubmit={async (e) => {
+							e.preventDefault(); // prevent page reload
+							await handleSubmit();
+						}}
+					>
 						{/* Full Name */}
 						<div>
 							<label htmlFor="name" className="block text-xs font-medium text-gray-700 mb-1">
@@ -114,7 +125,7 @@ export default function RegisterPage() {
 									type={showPassword ? 'text' : 'password'}
 									required
 									className="block w-full pl-8 pr-8 py-2 text-sm border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
-									placeholder="Minimal 8 karakter"
+									placeholder="Masukkan password"
 									value={formData.password}
 									onChange={handleInputChange}
 								/>
@@ -167,13 +178,12 @@ export default function RegisterPage() {
 
 						{/* Register Button */}
 						<button
-							type="button"
-							onClick={async () => await handleSubmit()}
+							type="submit"
 							className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-200"
 						>
 							Daftar Sekarang
 						</button>
-					</div>
+					</form>
 
 					{/* Login Link */}
 					<div className="mt-3 text-center">

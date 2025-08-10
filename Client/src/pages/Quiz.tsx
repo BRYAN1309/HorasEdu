@@ -315,7 +315,9 @@ const QuizPage = () => {
 			<div className="max-w-4xl mx-auto px-6 py-8">
 				{/* Question */}
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
-					<img src={question.url_image} alt="" className="w-full min-h-64 max-h-72 object-cover mb-4 rounded-md object-center" />
+					{question.url_image && (
+						<img src={question.url_image} alt="" className="w-full min-h-64 max-h-72 object-cover mb-4 rounded-md object-center" />
+					)}
 
 					<h2 className="text-2xl font-semibold text-gray-900 mb-6">{question.questions_text}</h2>
 

@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useState} from 'react';
 import type {IDashboardContext, ISidebarItems} from '../types/types';
-import {Home, Book, Award, Settings, HelpCircle} from 'lucide-react';
+import {Home, Book, Award, Settings, HelpCircle, AwardIcon} from 'lucide-react';
 
 const AppContext = createContext<IDashboardContext | undefined>(undefined);
 
@@ -9,8 +9,8 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) =
 	const [sidebarItems, setSidebarItems] = useState<ISidebarItems[]>([
 		{icon: Home, label: 'Dashboard', active: false},
 		{icon: Book, label: 'Courses', active: false},
+		{icon: AwardIcon, label: 'Games', active: false},
 		{icon: Settings, label: 'Profile', active: false},
-		{icon: Settings, label: 'Games', active: false},
 	]);
 
 	return (

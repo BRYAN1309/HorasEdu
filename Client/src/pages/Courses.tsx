@@ -170,7 +170,7 @@ const Courses = () => {
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
-		{/* Sidebar */}
+			{/* Sidebar */}
 			<Sidebar />
 
 			{/* Main Content */}
@@ -280,7 +280,9 @@ const Courses = () => {
 
 								<button className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center space-x-2 font-medium shadow-md hover:shadow-lg">
 									<Plus className="w-4 h-4" />
-									<span>Tambah Kursus</span>
+									<Link to={'/dashboard'}>
+										<span>Tambah Kursus</span>
+									</Link>
 								</button>
 							</div>
 						</div>

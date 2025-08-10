@@ -1,7 +1,7 @@
 import {Bell, User, Menu} from 'lucide-react';
 import {useAppContext} from '../contexts/AppContext';
 import {useEffect, useState} from 'react';
-import {useLocation} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import {Capitalize} from '../utils/utils';
 
 const Navbar = () => {
@@ -33,9 +33,11 @@ const Navbar = () => {
 						<Bell size={20} className="text-gray-600" />
 						<span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
 					</button> */}
-					<button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-						<User size={20} className="text-gray-600" />
-					</button>
+					<Link to={'/profile'}>
+						<button className="hover:cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors">
+							<User size={20} className="text-gray-600" />
+						</button>
+					</Link>
 				</div>
 			</div>
 		</header>

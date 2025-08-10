@@ -265,10 +265,8 @@ const Dashboard = () => {
 							{filteredCourses.map((course) => (
 								<div
 									key={course.id}
-									className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-2 cursor-pointer"
-									onClick={() => {
-										handleSelectCourse(course.id);
-									}}
+									className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-2 cursor-pointer flex flex-col"
+									onClick={() => handleSelectCourse(course.id)}
 								>
 									{/* Course Image */}
 									<div className="relative overflow-hidden">
@@ -285,7 +283,8 @@ const Dashboard = () => {
 										</div>
 									</div>
 
-									<div className="p-6">
+									{/* Course Content */}
+									<div className="p-6 flex flex-col flex-1">
 										{/* Course Header */}
 										<div className="flex items-start justify-between mb-3">
 											<div className="flex-1">
@@ -323,12 +322,14 @@ const Dashboard = () => {
 											</div>
 										</div>
 
-										{/* Action Button */}
-										<button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-[1.02] group/btn">
-											<Play size={18} className="transition-transform group-hover/btn:translate-x-0.5" />
-											Mulai Belajar
-											<ChevronRight size={16} className="transition-transform group-hover/btn:translate-x-0.5" />
-										</button>
+										{/* Action Button — pushed to bottom */}
+										<div className="mt-auto">
+											<button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-[1.02] group/btn">
+												<Play size={18} className="transition-transform group-hover/btn:translate-x-0.5" />
+												Mulai Belajar
+												<ChevronRight size={16} className="transition-transform group-hover/btn:translate-x-0.5" />
+											</button>
+										</div>
 									</div>
 								</div>
 							))}

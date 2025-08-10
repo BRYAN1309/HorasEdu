@@ -135,6 +135,8 @@ export interface CourseDetails {
 	kesulitan: 'pemula' | 'menengah' | 'lanjutan';
 	url_image: string;
 	modules: Module[];
+	course_requirements: string[];
+	course_learning: string[];
 	created_at: string;
 }
 

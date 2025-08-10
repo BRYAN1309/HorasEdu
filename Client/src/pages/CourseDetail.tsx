@@ -211,7 +211,7 @@ const CourseDetailsPage: React.FC = () => {
 							<button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
 								<ArrowLeft className="w-5 h-5" />
 								<Link to={'/courses'}>
-									<span>Back to Courses</span>
+									<span>Kembali ke kursus</span>
 								</Link>
 							</button>
 						</div>
@@ -236,19 +236,19 @@ const CourseDetailsPage: React.FC = () => {
 							<div className="flex items-center space-x-6 text-sm text-gray-500 mb-4">
 								<div className="flex items-center space-x-1">
 									<Clock className="w-4 h-4" />
-									<span>{course?.durasi} hours</span>
+									<span>{course?.durasi} menit</span>
 								</div>
 								<div className="flex items-center space-x-1">
 									<BookOpen className="w-4 h-4" />
-									<span>{orderedModules.length} modules</span>
+									<span>{orderedModules.length} modul</span>
 								</div>
 								<div className="flex items-center space-x-1">
 									<FileText className="w-4 h-4" />
-									<span>{totalMaterials} materials</span>
+									<span>{totalMaterials} material</span>
 								</div>
 								<div className="flex items-center space-x-1">
 									<Calendar className="w-4 h-4" />
-									<span>Created {new Date(course?.created_at || '').toLocaleDateString()}</span>
+									<span>Dibuat {new Date(course?.created_at || '').toLocaleDateString()}</span>
 								</div>
 							</div>
 
@@ -262,7 +262,7 @@ const CourseDetailsPage: React.FC = () => {
 									<span className="text-sm font-medium text-gray-900">{course?.author}</span>
 								</div>
 								<div className="flex items-center space-x-2">
-									<div className="text-sm text-gray-500">Progress: {progress()}%</div>
+									<div className="text-sm text-gray-500">Progres: {progress()}%</div>
 									<div className="w-32 bg-gray-200 rounded-full h-2">
 										<div className="bg-green-500 h-2 rounded-full transition-all duration-300" style={{width: `${progress()}%`}} />
 									</div>
@@ -280,7 +280,7 @@ const CourseDetailsPage: React.FC = () => {
 											activeTab === 'overview' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700'
 										}`}
 									>
-										Overview
+										Ringkasan
 									</button>
 									<button
 										onClick={() => setActiveTab('modules')}
@@ -288,7 +288,7 @@ const CourseDetailsPage: React.FC = () => {
 											activeTab === 'modules' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700'
 										}`}
 									>
-										Modules
+										Modul
 									</button>
 									<button
 										onClick={() => setActiveTab('progress')}
@@ -296,7 +296,7 @@ const CourseDetailsPage: React.FC = () => {
 											activeTab === 'progress' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700'
 										}`}
 									>
-										Progress
+										Progres
 									</button>
 								</nav>
 							</div>
@@ -305,42 +305,26 @@ const CourseDetailsPage: React.FC = () => {
 								{activeTab === 'overview' && (
 									<div className="space-y-6">
 										<div>
-											<h3 className="text-lg font-semibold mb-3">What You'll Learn</h3>
+											<h3 className="text-lg font-semibold mb-3">Apa yang akan kamu pelajari</h3>
 											<ul className="space-y-2">
-												<li className="flex items-start space-x-2">
-													<CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Master the fundamentals of Aksara Batak writing system</span>
-												</li>
-												<li className="flex items-start space-x-2">
-													<CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Understand the historical and cultural significance</span>
-												</li>
-												<li className="flex items-start space-x-2">
-													<CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Learn proper character formation and writing techniques</span>
-												</li>
-												<li className="flex items-start space-x-2">
-													<CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Practice with authentic Batak texts and examples</span>
-												</li>
+												{course?.course_requirements.map((req) => (
+													<li className="flex items-start space-x-2">
+														<CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+														<span className="text-gray-700">{req}</span>
+													</li>
+												))}
 											</ul>
 										</div>
 
 										<div>
-											<h3 className="text-lg font-semibold mb-3">Course Requirements</h3>
+											<h3 className="text-lg font-semibold mb-3">Persyaratan Kursus</h3>
 											<ul className="space-y-2">
-												<li className="flex items-start space-x-2">
-													<Target className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Basic understanding of Indonesian language</span>
-												</li>
-												<li className="flex items-start space-x-2">
-													<Target className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Interest in Batak culture and traditions</span>
-												</li>
-												<li className="flex items-start space-x-2">
-													<Target className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-													<span className="text-gray-700">Willingness to practice writing exercises</span>
-												</li>
+												{course?.course_learning.map((learn) => (
+													<li className="flex items-start space-x-2">
+														<Target className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+														<span className="text-gray-700">{learn}</span>
+													</li>
+												))}
 											</ul>
 										</div>
 									</div>
@@ -521,15 +505,15 @@ const CourseDetailsPage: React.FC = () => {
 										<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 											<div className="bg-gray-50 p-4 rounded-lg">
 												<div className="text-2xl font-bold text-gray-900">{completedModules}</div>
-												<div className="text-sm text-gray-600">Modules Completed</div>
+												<div className="text-sm text-gray-600">Modul Selesai</div>
 											</div>
 											<div className="bg-gray-50 p-4 rounded-lg">
 												<div className="text-2xl font-bold text-gray-900">{progress()}%</div>
-												<div className="text-sm text-gray-600">Overall Progress</div>
+												<div className="text-sm text-gray-600">Progres Kesuluruhan</div>
 											</div>
 											<div className="bg-gray-50 p-4 rounded-lg">
 												<div className="text-2xl font-bold text-gray-900">{orderedModules.filter((m) => !m.quiz.lock).length}</div>
-												<div className="text-sm text-gray-600">Quizzes Passed</div>
+												<div className="text-sm text-gray-600">Kuis Lolos</div>
 											</div>
 										</div>
 
@@ -595,40 +579,40 @@ const CourseDetailsPage: React.FC = () => {
 					{/* Sidebar */}
 					<div className="lg:col-span-1">
 						<div className="bg-white rounded-lg shadow-sm p-6 sticky top-6">
-							<h3 className="text-lg font-semibold mb-4">Course Stats</h3>
+							<h3 className="text-lg font-semibold mb-4">Ringkasan Kursus</h3>
 							<div className="space-y-4">
 								<div className="flex items-center justify-between">
-									<span className="text-gray-600">Total Progress</span>
+									<span className="text-gray-600">Total Progres</span>
 									<span className="font-medium">{progress()}%</span>
 								</div>
 								<div className="flex items-center justify-between">
-									<span className="text-gray-600">Completed Modules</span>
+									<span className="text-gray-600">Modul Terselesaikan</span>
 									<span className="font-medium">
 										{completedModules}/{orderedModules.length}
 									</span>
 								</div>
 								<div className="flex items-center justify-between">
-									<span className="text-gray-600">Total Materials</span>
+									<span className="text-gray-600">Total Material</span>
 									<span className="font-medium">{totalMaterials}</span>
 								</div>
 								<div className="flex items-center justify-between">
-									<span className="text-gray-600">Quizzes Passed</span>
+									<span className="text-gray-600">Kuis Lulus</span>
 									<span className="font-medium">{orderedModules.filter((m) => !m.quiz.lock).length}</span>
 								</div>
 								<div className="flex items-center justify-between">
-									<span className="text-gray-600">Final Exam</span>
+									<span className="text-gray-600">Ujian Akhir</span>
 									<span className={`font-medium ${areAllModulesCompleted() ? 'text-purple-600' : 'text-gray-400'}`}>
-										{finalExam ? 'Completed' : areAllModulesCompleted() ? 'Available' : 'Locked'}
+										{finalExam ? 'Selesai' : areAllModulesCompleted() ? 'Tersedia' : 'Terkunci'}
 									</span>
 								</div>
 							</div>
 
 							<div className="mt-6 pt-6 border-t border-gray-200">
-								<h4 className="font-semibold mb-3">Next Steps</h4>
+								<h4 className="font-semibold mb-3">Tahap Berikutnya</h4>
 								<div className="text-sm text-gray-600">
 									{!areAllModulesCompleted() ? (
 										<div>
-											Continue with <span className="font-medium text-gray-900">{orderedModules.find((m) => !m.completed)?.title}</span>
+											Lanjutkan ke <span className="font-medium text-gray-900">{orderedModules.find((m) => !m.completed)?.title}</span>
 										</div>
 									) : progress() < 100 ? (
 										<div className="text-purple-600 font-medium">Ready for Final Exam! 🎓</div>

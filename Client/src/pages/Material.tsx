@@ -162,7 +162,7 @@ const MaterialPage = () => {
 					<div className="flex items-start justify-between mb-4">
 						<div className="flex-1">
 							<h3 className="text-xl font-semibold text-gray-900 mb-2">{material?.title}</h3>
-							{material?.description && <p className="text-gray-600 leading-relaxed">{material.description}</p>}
+							<div dangerouslySetInnerHTML={{__html: material?.content || ''}} />
 						</div>
 						<div className="flex items-center space-x-2 text-sm text-gray-500 ml-4">
 							<Clock className="w-4 h-4" />
@@ -201,10 +201,10 @@ const MaterialPage = () => {
 						Video Notes
 					</h4>
 					<div className="text-blue-800 text-sm space-y-2">
-						<p>• Take notes while watching to better retain the information</p>
-						<p>• You can pause and rewind the video as needed</p>
-						<p>• Consider watching at different speeds for optimal learning</p>
-						{material?.duration && <p>• Estimated completion time: {material.duration} minutes</p>}
+						<p>• Catat poin-poin penting saat menonton untuk membantu mengingat materi</p>
+						<p>• Anda dapat menjeda dan memutar ulang video sesuai kebutuhan</p>
+						<p>• Coba tonton dengan kecepatan berbeda untuk pembelajaran yang lebih efektif</p>
+						{material?.duration && <p>• Perkiraan waktu penyelesaian: {material.duration} menit</p>}
 					</div>
 				</div>
 
